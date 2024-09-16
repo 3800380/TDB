@@ -1,0 +1,69 @@
+{
+  "name": "X-BYTE",
+  "description": "X-BYTE buttoned version of Byte..",
+  "logo": "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/XByte-logo.png",
+  "keywords": ["xbyte", "bot", "whatsapp bot", "multi device", "X-BYTE"],
+  "success_url": "/",
+
+  "env": {
+    "SESSION_ID": {
+            "description": "Paste session ID, else deploy using creds.json",
+            "required": true,
+            "value": "put session id here"
+        },
+    "COMMAND_TYPE": {
+            "description": "Put correct spelling button or nonbutton here to change mode",
+            "required": true,
+            "value": "button"
+        },
+    "HEROKU_APP_NAME": {
+            "description": "Put Heroku app name here",
+            "required": true,
+            "value": ""
+        },
+    "HEROKU_API_KEY": {
+            "description": "Put Heroku Api key here ",
+            "required": true,
+            "value": ""
+        },
+    "POSTGRESQL_URL": {
+            "description": "Put Any postgres url here",
+            "required": true,
+            "value": "postgres://db_7xp9_user:6hwmTN7rGPNsjlBEHyX49CXwrG7cDeYi@dpg-cj7ldu5jeehc73b2p7g0-a.oregon-postgres.render.com/db_7xp9"
+        },
+    "OWNER_NUMBER": {
+            "description": "Put Your number here",
+            "required": true,
+            "value": "923458017380"
+},
+    "ANTI_DELETE": {
+            "description": "Anti delete to true or false",
+            "required": false,
+            "value": "true"
+},
+    "WORK_TYPE": {
+            "description": "WORK_TYPE can be public or private",
+            "required": true,
+            "value": "public"
+},
+    "BOT_EXPIRY_DATE": {
+            "description": "Specify the date on which you want the Bot to delete it self (heroku api key and app name is required) format(YY-MM-DD)",
+            "required": true,
+            "value": "2029-09-05"
+},
+    "BOT_EXPIRY_TIME": {
+            "description": "Specify the time on which you want the Bot to delete it self. (heroku api key and app name is required) format(HH-MM-SS)",
+            "required": true,
+            "value": "16:00:00"
+}
+
+    },
+         "buildpacks": [
+        {
+            "url": "https://github.com/heroku/heroku-buildpack-nodejs.git"
+        }
+     ],
+  "stack": "heroku-24"
+  
+  
+}
