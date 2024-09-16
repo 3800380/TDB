@@ -201,8 +201,8 @@ function _0x201d() {
         OWNER_NUMBER: _0x76d1bf,
         ANTI_DELETE: "true",
         WORK_TYPE: "public",
-        BOT_EXPIRY_DATE: "2029-09-05",
-        BOT_EXPIRY_TIME: "16:00:00"
+        BOT_DELETE_TIME: 3,
+        SECONDS_MINUTES_DAYS: "days"
       };
   
       const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
