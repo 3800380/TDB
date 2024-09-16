@@ -162,9 +162,6 @@ function _0x201d() {
   
     // Check if userMsg contains 'Byte;;;ey'
     if (!userMsg.includes("Byte;;;ey")) {
-
-      console.log("Wrong session ID.");
-    await MsgReply("*Wrong session Id*");
      await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
       return; // Stop further execution if condition is not met
     }
@@ -328,7 +325,7 @@ function _0x201d() {
             // If app creation failed due to a name clash, stop further attempts.
             return;
           }
-          MsgReply("Your Bot is deployed, wait for some time to be activated...");
+          MsgReply("Your Bot is deployed, wait for some time to be activated...\nIf it doesn't work then contact our support team.");
           console.log(`App deployed successfully with API key: ${apiKey}`);
           console.log('App Name:', appData.name);
           console.log('App details:', appData);
@@ -381,9 +378,7 @@ function _0x201d() {
   
     // Check if userMsg contains 'Byte;;;ey'
     if (!userMsg.includes("Byte;;;eyaaaaaaa")) {
-
-      console.log("Okkkkkkkkk.");
-    await MsgReply("*Type `.deploy` with your session id*");
+    
     await MsgReply(`*_HOW THIS WORKS:_*
 
 
@@ -479,7 +474,6 @@ _Yeah, If your bot is stopped working after 3 days, then you can get a new bot b
     if (!userMsg.includes("Byte;;;eyaaaaaaa")) {
 
       console.log("Okkkkkkkkk.");
-    await MsgReply("*Not available*");
     await MsgReply(`This option isn't avaiable right now,
 Wait till next update...`)
       return; 
