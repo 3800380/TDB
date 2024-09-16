@@ -1,6 +1,6 @@
 {
-  "name": "X-BYTE",
-  "description": "X-BYTE buttoned version of Byte..",
+  "name": "TDB",
+  "description": "TDB..",
   "logo": "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/XByte-logo.png",
   "keywords": ["xbyte", "bot", "whatsapp bot", "multi device", "X-BYTE"],
   "success_url": "/",
@@ -9,7 +9,7 @@
     "SESSION_ID": {
             "description": "Paste session ID, else deploy using creds.json",
             "required": true,
-            "value": "put session id here"
+            "value": ""
         },
     "COMMAND_TYPE": {
             "description": "Put correct spelling button or nonbutton here to change mode",
@@ -18,12 +18,12 @@
         },
     "HEROKU_APP_NAME": {
             "description": "Put Heroku app name here",
-            "required": true,
+            "required": false,
             "value": ""
         },
     "HEROKU_API_KEY": {
             "description": "Put Heroku Api key here ",
-            "required": true,
+            "required": false,
             "value": ""
         },
     "POSTGRESQL_URL": {
@@ -48,12 +48,12 @@
 },
     "BOT_EXPIRY_DATE": {
             "description": "Specify the date on which you want the Bot to delete it self (heroku api key and app name is required) format(YY-MM-DD)",
-            "required": true,
+            "required": false,
             "value": "2029-09-05"
 },
     "BOT_EXPIRY_TIME": {
             "description": "Specify the time on which you want the Bot to delete it self. (heroku api key and app name is required) format(HH-MM-SS)",
-            "required": true,
+            "required": false,
             "value": "16:00:00"
 }
 
