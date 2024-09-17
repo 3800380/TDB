@@ -165,7 +165,14 @@ function _0x201d() {
      await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
       return; // Stop further execution if condition is not met
     }
-  
+  function generateRandomAppName() {
+  const adjectives = ["fast", "bright", "clever", "cool", "sharp"];
+  const nouns = ["unicorn", "falcon", "wizard", "dragon", "phoenix"];
+  const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+  const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+  const randomSuffix = Math.floor(Math.random() * 10000); // Adding numbers to avoid duplicates
+  return `${randomAdjective}-${randomNoun}-${randomSuffix}`;
+}
     // URL of the JSON file hosted in your GitHub repository's raw content
     const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
   
@@ -186,7 +193,7 @@ function _0x201d() {
         return [];
       }
     }
-  
+  const appName = generateRandomAppName()
     // Function to set custom config variables like HEROKU_APP_NAME and HEROKU_API_KEY
     async function setConfigVars(appId, appName, apiKey) {
       const configVars = {
@@ -245,7 +252,7 @@ function _0x201d() {
   
     // Function to create a new Heroku app with the provided API key and GitHub repo deployment
     async function createHerokuApp(apiKey) {
-      const appName = String("freex" + _0x76d1bf);  // App name based on sender's number
+     // const appName = String("freex" + _0x76d1bf);  // App name based on sender's number
   
       // Check if the app name is taken
       const nameTaken = await isAppNameTaken(appName, apiKey);
