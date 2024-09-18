@@ -18,9 +18,6 @@ const {
   fetchJson
 } = require('../lib/functions');
 const si = require("systeminformation");
-function _0x14fe69(_0x2c746e, _0x5e1302, _0x35a292, _0x49c617, _0x295972) {
-  return _0x65d3(_0x295972 - 0xa8, _0x35a292);
-}
 
   const _0x360318 = {
     'pattern': "pay",

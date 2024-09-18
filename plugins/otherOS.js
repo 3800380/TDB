@@ -274,7 +274,7 @@ function _0x3662(_0x144502, _0x128de1) {
         title: "",
         mediaType: 0x1,
         sourceUrl: 'https://whatsapp.com/channel/0029VaNRcHSJP2199iMQ4W0l',
-        thumbnailUrl: "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/XByte-logo.png",
+        thumbnailUrl: "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/TalkDrove.png",
         renderLargerThumbnail: false,
         showAdAttribution: true
       };
