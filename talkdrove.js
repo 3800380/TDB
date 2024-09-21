@@ -112,7 +112,7 @@ const {
       state: _0x5b20f4,
       saveCreds: _0x463fb
     } = await useMultiFileAuthState(__dirname + '/session/');
-    const _0x1a43b = makeWASocket({
+    const Hamza = makeWASocket({
       'logger': P({
         'level': "fatal"
       }).child({
@@ -124,7 +124,7 @@ const {
       'defaultQueryTimeoutMs': undefined,
       'msgRetryCounterCache': msgRetryCounterCache
     });
-    _0x1a43b.ev.on("connection.update", async _0x188489 => {
+    Hamza.ev.on("connection.update", async _0x188489 => {
       const {
         connection: _0x1f6193,
         lastDisconnect: _0x5913c4
@@ -143,8 +143,8 @@ const {
             }
           });
           // console.log("Plugins installed ✅");
-          console.log("Bot connected ✅");
-          await _0x1a43b.sendMessage(config.OWNER_NUMBER + "@s.whatsapp.net", {
+          console.log("Bot connected");
+          await Hamza.sendMessage(Hamza.user.id, {
             'text': "*X-BYTE CONNECTED*",
             'contextInfo': {
               'externalAdReply': {
@@ -159,37 +159,37 @@ const {
         }
       }
     });
-    _0x1a43b.ev.on("call", async _0x520a34 => {
+    Hamza.ev.on("call", async _0x520a34 => {
       if (config.ANTI_CALL === "true") {
         for (const _0x428ad2 of _0x520a34) {
           if (_0x428ad2.status == "offer") {
             if (_0x428ad2.isGroup == false) {
-              await _0x1a43b.sendMessage(_0x428ad2.from, {
+              await Hamza.sendMessage(_0x428ad2.from, {
                 'text': "⚠️︱I'm X-BYTE, I rejected Call Because my owner is Busy!",
                 'mentions': [_0x428ad2.from]
               });
-              await _0x1a43b.rejectCall(_0x428ad2.id, _0x428ad2.from);
+              await Hamza.rejectCall(_0x428ad2.id, _0x428ad2.from);
             } else {
-              await _0x1a43b.rejectCall(_0x428ad2.id, _0x428ad2.from);
+              await Hamza.rejectCall(_0x428ad2.id, _0x428ad2.from);
             }
           }
         }
       }
     });
-    _0x1a43b.ev.on("group-participants.update", async _0x5b571d => {
+    Hamza.ev.on("group-participants.update", async _0x5b571d => {
       if (config.WELCOME === "true") {
         console.log(_0x5b571d);
         try {
-          let _0x43bbe4 = await _0x1a43b.groupMetadata(_0x5b571d.id);
+          let _0x43bbe4 = await Hamza.groupMetadata(_0x5b571d.id);
           let _0x374c5e = _0x5b571d.participants;
           for (let _0x121b85 of _0x374c5e) {
             try {
-              ppuser = await _0x1a43b.profilePictureUrl(_0x121b85, "image");
+              ppuser = await Hamza.profilePictureUrl(_0x121b85, "image");
             } catch (_0x24f84a) {
               ppuser = "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/XByte-logo.png";
             }
             try {
-              ppgroup = await _0x1a43b.profilePictureUrl(_0x5b571d.id, "image");
+              ppgroup = await Hamza.profilePictureUrl(_0x5b571d.id, "image");
             } catch (_0x4be90b) {
               ppgroup = "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/XByte-logo.png";
             }
@@ -201,7 +201,7 @@ const {
               const _0x1d1973 = moment.tz("Asia/Karachi").format("DD/MM/YYYY");
               const _0x31556f = _0x43bbe4.participants.length;
               connbody = "┌─❖\n│「 𝗛𝗶 👋 」\n└┬❖ 「  @" + _0x121b85.split('@')[0x0] + "  」\n   │✑  𝗪𝗲𝗹𝗰𝗼𝗺𝗲 𝘁𝗼 \n   │✑  " + _0x43bbe4.subject + "\n   │✑  𝗠𝗲𝗺𝗯𝗲𝗿 : \n   │✑ " + _0x31556f + "th\n   │✑  𝗝𝗼𝗶𝗻𝗲𝗱 : \n   │✑ " + _0x5aeb41 + " " + _0x1d1973 + "\n   └───────────────┈ ⳹";
-              _0x1a43b.sendMessage(_0x5b571d.id, {
+              Hamza.sendMessage(_0x5b571d.id, {
                 'text': connbody,
                 'contextInfo': {
                   'mentionedJid': [_0x121b85],
@@ -223,7 +223,7 @@ const {
                 const _0x132994 = moment.tz("Asia/Karachi").format("DD/MM/YYYY");
                 const _0x1bb9a1 = _0x43bbe4.participants.length;
                 connbody = "┌─❖\n│「 𝗚𝗼𝗼𝗱𝗯𝘆𝗲 👋 」\n└┬❖ 「 @" + _0x121b85.split('@')[0x0] + "  」\n   │✑  𝗟𝗲𝗳𝘁 \n   │✑ " + _0x43bbe4.subject + "\n   │✑  𝗠𝗲𝗺𝗯𝗲𝗿 : \n   │✑ " + _0x1bb9a1 + "th\n   │✑  𝗧𝗶𝗺𝗲 : \n   │✑  " + _0x540928 + " " + _0x132994 + "\n   └───────────────┈ ⳹";
-                _0x1a43b.sendMessage(_0x5b571d.id, {
+                Hamza.sendMessage(_0x5b571d.id, {
                   'text': connbody,
                   'contextInfo': {
                     'mentionedJid': [_0x121b85],
@@ -247,25 +247,25 @@ const {
         }
       }
     });
-    _0x1a43b.ev.on("group-participants.update", async _0x54ecca => {
+    Hamza.ev.on("group-participants.update", async _0x54ecca => {
       if (config.ADMIN_EVENT === "true") {
         console.log(_0x54ecca);
         try {
           let _0x541b68 = _0x54ecca.participants;
           for (let _0x27ec70 of _0x541b68) {
             try {
-              ppuser = await _0x1a43b.profilePictureUrl(_0x27ec70, "image");
+              ppuser = await Hamza.profilePictureUrl(_0x27ec70, "image");
             } catch (_0x2ab444) {
               ppuser = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png?q=60';
             }
             try {
-              ppgroup = await _0x1a43b.profilePictureUrl(_0x54ecca.id, "image");
+              ppgroup = await Hamza.profilePictureUrl(_0x54ecca.id, "image");
             } catch (_0x2d32e0) {
               ppgroup = "https://i.ibb.co/RBx5SQC/avatar-group-large-v2.png?q=60";
             }
             if (_0x54ecca.action == 'promote') {
               xeonbody = " 𝗖𝗼𝗻𝗴𝗿𝗮𝘁𝘀🎉 @" + _0x27ec70.split('@')[0x0] + ", you have been *promoted* to *admin* 🥳";
-              _0x1a43b.sendMessage(_0x54ecca.id, {
+              Hamza.sendMessage(_0x54ecca.id, {
                 'text': xeonbody,
                 'contextInfo': {
                   'mentionedJid': [_0x27ec70],
@@ -284,7 +284,7 @@ const {
             } else {
               if (_0x54ecca.action == 'demote') {
                 xeonbody = "𝗢𝗼𝗽𝘀‼️ @" + _0x27ec70.split('@')[0x0] + ", you have been *demoted* from *admin* 😬";
-                _0x1a43b.sendMessage(_0x54ecca.id, {
+                Hamza.sendMessage(_0x54ecca.id, {
                   'text': xeonbody,
                   'contextInfo': {
                     'mentionedJid': [_0x27ec70],
@@ -317,7 +317,7 @@ const {
         'conversation': 'Hai'
       };
     }
-    _0x1a43b.ev.on('messages.update', async _0xa21548 => {
+    Hamza.ev.on('messages.update', async _0xa21548 => {
       for (const {
         key: _0xa1215a,
         update: _0x3ccbc4
@@ -348,7 +348,7 @@ const {
         }
       }
     });
-    _0x1a43b.ev.on("messages.update", async _0x14486a => {
+    Hamza.ev.on("messages.update", async _0x14486a => {
       for (const {
         key: _0x9a150a,
         update: _0x3888f1
@@ -358,7 +358,7 @@ const {
           const _0x5e8eed = _0x3ca4b9.message;
           if (_0x5e8eed) {
             const _0x30636d = _0x9a150a.remoteJid;
-            const _0x20d126 = await jidNormalizedUser(_0x1a43b.user.id);
+            const _0x20d126 = await jidNormalizedUser(Hamza.user.id);
             const _0x55b539 = await getAggregateVotesInPollMessage({
               'message': _0x5e8eed,
               'pollUpdates': _0x3888f1.pollUpdates
@@ -399,15 +399,15 @@ const {
               'voter': _0xa6673b,
               'type': 'poll'
             };
-            await _0x1a43b.sendMessage(_0x20d126, {
+            await Hamza.sendMessage(_0x20d126, {
               'text': JSON.stringify(_0x425b29, null, 0x2)
             });
           }
         }
       }
     });
-    _0x1a43b.ev.on("creds.update", _0x463fb);
-    _0x1a43b.ev.on("messages.upsert", async _0x16a610 => {
+    Hamza.ev.on("creds.update", _0x463fb);
+    Hamza.ev.on("messages.upsert", async _0x16a610 => {
       try {
         _0x16a610 = _0x16a610.messages[0x0];
         if (!_0x16a610.message) {
@@ -417,13 +417,13 @@ const {
         _0x16a610.message = getContentType(_0x16a610.message) === "ephemeralMessage" ? _0x16a610.message.ephemeralMessage.message : _0x16a610.message;
         if (config.AUTO_STATUS_READ === 'true') {
           if (_0x16a610.key && _0x16a610.key.remoteJid === "status@broadcast") {
-            await _0x1a43b.readMessages([_0x16a610.key]);
+            await Hamza.readMessages([_0x16a610.key]);
           }
         }
         if (_0x16a610.key && _0x16a610.key.remoteJid === 'status@broadcast') {
           return;
         }
-        const _0x285b77 = sms(_0x1a43b, _0x16a610);
+        const _0x285b77 = sms(Hamza, _0x16a610);
         const _0x372d99 = getContentType(_0x16a610.message);
         const _0x164b21 = _0x16a610.key.remoteJid;
         const _0x9d7216 = _0x372d99 == 'extendedTextMessage' && _0x16a610.message.extendedTextMessage.contextInfo != null ? _0x16a610.message.extendedTextMessage.contextInfo.quotedMessage || [] : [];
@@ -439,8 +439,8 @@ const {
         } else {
           '';
         }
-        _0x1a43b.sendPoll = (_0x1ac3b7, _0x129e59 = '', _0x20cf25 = [], _0x70f276 = 0x1) => {
-          return _0x1a43b.sendMessage(_0x1ac3b7, {
+        Hamza.sendPoll = (_0x1ac3b7, _0x129e59 = '', _0x20cf25 = [], _0x70f276 = 0x1) => {
+          return Hamza.sendMessage(_0x1ac3b7, {
             'poll': {
               'name': _0x129e59,
               'values': _0x20cf25,
@@ -469,20 +469,20 @@ const {
         }
         console.log(_0x1f5ce6);
         const _0x303ba3 = _0x164b21.endsWith("@g.us");
-        const _0x3df711 = _0x16a610.key.fromMe ? _0x1a43b.user.id.split(':')[0x0] + '@s.whatsapp.net' || _0x1a43b.user.id : _0x16a610.key.participant || _0x16a610.key.remoteJid;
+        const _0x3df711 = _0x16a610.key.fromMe ? Hamza.user.id.split(':')[0x0] + '@s.whatsapp.net' || Hamza.user.id : _0x16a610.key.participant || _0x16a610.key.remoteJid;
         const _0x563ea8 = _0x3df711.split('@')[0x0];
-        const _0x39ab9e = _0x1a43b.user.id.split(':')[0x0];
+        const _0x39ab9e = Hamza.user.id.split(':')[0x0];
         const _0x323f5a = _0x16a610.pushName || "Sin Nombre";
         const _0x41ac17 = _0x39ab9e.includes(_0x563ea8);
         const _0x521cb9 = "923072380380".includes(_0x563ea8);
         let _0x304e15 = (await axios.get("https://raw.githubusercontent.com/HyHamza/HyHamza/main/files/X-ByteOwners.json")).data;
         const _0x2a4a9f = _0x304e15.split(',');
         const _0x1c9420 = [..._0x2a4a9f].map(_0x23184e => _0x23184e.replace(/[^0-9]/g, '') + "@s.whatsapp.net").includes(_0x3df711);
-        const _0x28a9cb = await jidNormalizedUser(_0x1a43b.user.id);
+        const _0x28a9cb = await jidNormalizedUser(Hamza.user.id);
         const _0x2bca18 = [_0x28a9cb].map(_0x3913ad => _0x3913ad.replace(/[^0-9]/g, '') + "@s.whatsapp.net").includes(_0x3df711);
         const _0x435b43 = _0x41ac17 ? _0x41ac17 : _0x521cb9;
         const _0x9b6f00 = ownerNumber.includes(_0x563ea8) || _0x435b43;
-        const _0x4de3e3 = _0x303ba3 ? await _0x1a43b.groupMetadata(_0x164b21)["catch"](_0xf49cff => {}) : '';
+        const _0x4de3e3 = _0x303ba3 ? await Hamza.groupMetadata(_0x164b21)["catch"](_0xf49cff => {}) : '';
         const _0x30cf8e = _0x303ba3 ? _0x4de3e3.subject : '';
         const _0x5c06bf = _0x303ba3 ? await _0x4de3e3.participants : '';
         const _0x7423bd = _0x303ba3 ? await getGroupAdmins(_0x5c06bf) : '';
@@ -497,7 +497,7 @@ const {
           return false;
         };
         const _0x47c220 = async _0x364fe1 => {
-          return await _0x1a43b.sendMessage(_0x164b21, {
+          return await Hamza.sendMessage(_0x164b21, {
             'text': _0x364fe1
           }, {
             'quoted': _0x16a610
@@ -511,8 +511,8 @@ const {
         }
         var _0x46b63a = await get_set("all");
         config = await _0x57e7e0(config, _0x46b63a);
-        _0x1a43b.replyad = async _0x10ac1e => {
-          return await _0x1a43b.sendMessage(_0x164b21, {
+        Hamza.replyad = async _0x10ac1e => {
+          return await Hamza.sendMessage(_0x164b21, {
             'text': _0x10ac1e,
             'contextInfo': {
               'mentionedJid': [''],
@@ -537,7 +537,7 @@ const {
             'quoted': _0x16a610
           });
         };
-        _0x1a43b.buttonMessage2 = async (_0x2d6eca, _0x52878f, _0x473772) => {
+        Hamza.buttonMessage2 = async (_0x2d6eca, _0x52878f, _0x473772) => {
           let _0x10ccd8 = '';
           const _0x10a701 = [];
           _0x52878f.buttons.forEach((_0x22632a, _0x1b7ec6) => {
@@ -550,7 +550,7 @@ const {
           });
           if (_0x52878f.headerType === 0x1) {
             const _0x3860e2 = _0x52878f.text + "\n\n🔢 Reply you want number," + _0x10ccd8 + "\n" + _0x52878f.footer;
-            const _0xb050fc = await _0x1a43b.sendMessage(_0x164b21, {
+            const _0xb050fc = await Hamza.sendMessage(_0x164b21, {
               'text': _0x3860e2,
               'contextInfo': {
                 'mentionedJid': [''],
@@ -578,7 +578,7 @@ const {
           } else {
             if (_0x52878f.headerType === 0x4) {
               const _0x386451 = _0x52878f.caption + "\n\n🔢 Reply you want number," + _0x10ccd8 + "\n" + _0x52878f.footer;
-              const _0x50fa1f = await _0x1a43b.sendMessage(_0x2d6eca, {
+              const _0x50fa1f = await Hamza.sendMessage(_0x2d6eca, {
                 'image': _0x52878f.image,
                 'caption': _0x386451,
                 'contextInfo': {
@@ -607,7 +607,7 @@ const {
             }
           }
         };
-        _0x1a43b.replyList = async (_0x26b397, _0x41191c, _0x2e634b) => {
+        Hamza.replyList = async (_0x26b397, _0x41191c, _0x2e634b) => {
           function _0x31aaa2(_0x17c64e) {
             let _0xf15ef2 = '';
             _0x17c64e.forEach((_0x46f891, _0x2582ad) => {
@@ -631,7 +631,7 @@ const {
           delete _0x41191c.footer;
           delete _0x41191c.buttonText;
           delete _0x41191c.title;
-          const _0x53f9e4 = await _0x1a43b.sendMessage(_0x26b397, _0x41191c, _0x2e634b);
+          const _0x53f9e4 = await Hamza.sendMessage(_0x26b397, _0x41191c, _0x2e634b);
           const _0x4488a6 = [];
           _0x10eef2.sections.forEach(_0xf001bf => {
             _0xf001bf.rows.forEach(_0x39249b => {
@@ -645,7 +645,7 @@ const {
             await _0x24660e.input_data(_0x4488a6[_0x4cf811].rowId, _0x4488a6[_0x4cf811].title, _0x53f9e4.key.id);
           }
         };
-        _0x1a43b.buttonMessage = async (_0x35b650, _0x5e89cd, _0x522efa) => {
+        Hamza.buttonMessage = async (_0x35b650, _0x5e89cd, _0x522efa) => {
           let _0x6ae993 = '';
           const _0x1ec168 = [];
           _0x5e89cd.buttons.forEach((_0x4df475, _0x4f2ce0) => {
@@ -658,7 +658,7 @@ const {
           });
           if (_0x5e89cd.headerType === 0x1) {
             const _0x1d51b7 = (_0x5e89cd.text || _0x5e89cd.caption) + "\n🔢 Reply you want number," + _0x6ae993 + "\n\n" + _0x5e89cd.footer;
-            const _0x55c75f = await _0x1a43b.sendMessage(_0x164b21, {
+            const _0x55c75f = await Hamza.sendMessage(_0x164b21, {
               'text': _0x1d51b7,
               'contextInfo': {
                 'mentionedJid': [''],
@@ -686,7 +686,7 @@ const {
           } else {
             if (_0x5e89cd.headerType === 0x4) {
               const _0xece93f = _0x5e89cd.caption + "\n\n🔢 Reply you want number," + _0x6ae993 + "\n" + _0x5e89cd.footer;
-              const _0x4d245f = await _0x1a43b.sendMessage(_0x35b650, {
+              const _0x4d245f = await Hamza.sendMessage(_0x35b650, {
                 'image': _0x5e89cd.image,
                 'caption': _0xece93f,
                 'contextInfo': {
@@ -715,7 +715,7 @@ const {
             }
           }
         };
-        _0x1a43b.listMessage2 = async (_0x2c499e, _0x18da47, _0xe99acb) => {
+        Hamza.listMessage2 = async (_0x2c499e, _0x18da47, _0xe99acb) => {
           let _0x502dd4 = '';
           const _0x4eabc8 = [];
           _0x18da47.sections.forEach((_0x26e921, _0x22a775) => {
@@ -735,7 +735,7 @@ const {
             });
           });
           const _0x18729b = _0x18da47.text + "\n\n" + _0x18da47.buttonText + ',' + _0x502dd4 + "\n" + _0x18da47.footer;
-          const _0x4365b1 = await _0x1a43b.sendMessage(_0x164b21, {
+          const _0x4365b1 = await Hamza.sendMessage(_0x164b21, {
             'text': _0x18729b,
             'contextInfo': {
               'mentionedJid': [''],
@@ -761,7 +761,7 @@ const {
           });
           await updateCMDStore(_0x4365b1.key.id, _0x4eabc8);
         };
-        _0x1a43b.listMessage = async (_0x1a1ede, _0x5ac663, _0x4d8426) => {
+        Hamza.listMessage = async (_0x1a1ede, _0x5ac663, _0x4d8426) => {
           let _0x37becf = '';
           const _0x4fe115 = [];
           _0x5ac663.sections.forEach((_0x8b473e, _0x40e019) => {
@@ -781,7 +781,7 @@ const {
             });
           });
           const _0x1b3f82 = _0x5ac663.text + "\n\n" + _0x5ac663.buttonText + ',' + _0x37becf + "\n" + _0x5ac663.footer;
-          const _0x1afbe2 = await _0x1a43b.sendMessage(_0x164b21, {
+          const _0x1afbe2 = await Hamza.sendMessage(_0x164b21, {
             'text': _0x1b3f82,
             'contextInfo': {
               'mentionedJid': [''],
@@ -807,8 +807,8 @@ const {
           });
           await updateCMDStore(_0x1afbe2.key.id, _0x4fe115);
         };
-        _0x1a43b.edite = async (_0x40159e, _0x4d528b) => {
-          await _0x1a43b.relayMessage(_0x164b21, {
+        Hamza.edite = async (_0x40159e, _0x4d528b) => {
+          await Hamza.relayMessage(_0x164b21, {
             'protocolMessage': {
               'key': _0x40159e.key,
               'type': 0xe,
@@ -832,8 +832,8 @@ const {
         config.LOGO2 = _0x32e7ac.imageurl2;
         config.C_NAME = _0x32e7ac.channel;
         config.O_NO = _0x32e7ac.otherno;
-        _0x1a43b.edit = async (_0x59e704, _0x1afed7) => {
-          await _0x1a43b.relayMessage(_0x164b21, {
+        Hamza.edit = async (_0x59e704, _0x1afed7) => {
+          await Hamza.relayMessage(_0x164b21, {
             'protocolMessage': {
               'key': _0x59e704.key,
               'type': 0xe,
@@ -843,12 +843,12 @@ const {
             }
           }, {});
         };
-        _0x1a43b.sendFileUrl = async (_0x2dbd25, _0x3480ab, _0x171e68, _0x23008b, _0xe94432 = {}) => {
+        Hamza.sendFileUrl = async (_0x2dbd25, _0x3480ab, _0x171e68, _0x23008b, _0xe94432 = {}) => {
           let _0x1826d2 = '';
           let _0x5ad166 = await axios.head(_0x3480ab);
           _0x1826d2 = _0x5ad166.headers["content-type"];
           if (_0x1826d2.split('/')[0x1] === "gif") {
-            return _0x1a43b.sendMessage(_0x2dbd25, {
+            return Hamza.sendMessage(_0x2dbd25, {
               'video': await getBuffer(_0x3480ab),
               'caption': _0x171e68,
               'gifPlayback': true,
@@ -859,7 +859,7 @@ const {
             });
           }
           if (_0x1826d2 === 'application/pdf') {
-            return _0x1a43b.sendMessage(_0x2dbd25, {
+            return Hamza.sendMessage(_0x2dbd25, {
               'document': await getBuffer(_0x3480ab),
               'mimetype': "application/pdf",
               'caption': _0x171e68,
@@ -870,7 +870,7 @@ const {
             });
           }
           if (_0x1826d2.split('/')[0x0] === "image") {
-            return _0x1a43b.sendMessage(_0x2dbd25, {
+            return Hamza.sendMessage(_0x2dbd25, {
               'image': await getBuffer(_0x3480ab),
               'caption': _0x171e68,
               ..._0xe94432
@@ -880,7 +880,7 @@ const {
             });
           }
           if (_0x1826d2.split('/')[0x0] === 'video') {
-            return _0x1a43b.sendMessage(_0x2dbd25, {
+            return Hamza.sendMessage(_0x2dbd25, {
               'video': await getBuffer(_0x3480ab),
               'caption': _0x171e68,
               'mimetype': "video/mp4",
@@ -891,7 +891,7 @@ const {
             });
           }
           if (_0x1826d2.split('/')[0x0] === "audio") {
-            return _0x1a43b.sendMessage(_0x2dbd25, {
+            return Hamza.sendMessage(_0x2dbd25, {
               'audio': await getBuffer(_0x3480ab),
               'caption': _0x171e68,
               'mimetype': "audio/mpeg",
@@ -902,7 +902,7 @@ const {
             });
           }
         };
-        _0x1a43b.sendButtonMessage = async (_0x4f23d9, _0x274a6e, _0x20416c, _0x4853bd = {}) => {
+        Hamza.sendButtonMessage = async (_0x4f23d9, _0x274a6e, _0x20416c, _0x4853bd = {}) => {
           let _0x288c21;
           if (_0x4853bd?.['video']) {
             var _0x258df0 = await prepareWAMessageMedia({
@@ -910,7 +910,7 @@ const {
                 'url': _0x4853bd && _0x4853bd.video ? _0x4853bd.video : ''
               }
             }, {
-              'upload': _0x1a43b.waUploadToServer
+              'upload': Hamza.waUploadToServer
             });
             _0x288c21 = {
               'title': _0x4853bd && _0x4853bd.header ? _0x4853bd.header : '',
@@ -924,7 +924,7 @@ const {
                   'url': _0x4853bd && _0x4853bd.image ? _0x4853bd.image : ''
                 }
               }, {
-                'upload': _0x1a43b.waUploadToServer
+                'upload': Hamza.waUploadToServer
               });
               _0x288c21 = {
                 'title': _0x4853bd && _0x4853bd.header ? _0x4853bd.header : '',
@@ -981,9 +981,9 @@ const {
           }, {
             'quoted': _0x20416c
           });
-          await _0x1a43b.sendPresenceUpdate("composing", _0x4f23d9);
+          await Hamza.sendPresenceUpdate("composing", _0x4f23d9);
           await sleep(1000);
-          return await _0x1a43b.relayMessage(_0x4f23d9, _0x4a3d45.message, {
+          return await Hamza.relayMessage(_0x4f23d9, _0x4a3d45.message, {
             'messageId': _0x4a3d45.key.id
           });
         };
@@ -999,7 +999,7 @@ const {
           const _0x502da1 = _0x1a954f.commands.find(_0x5b45f5 => _0x5b45f5.pattern === _0x139a38) || _0x1a954f.commands.find(_0x312d96 => _0x312d96.alias && _0x312d96.alias.includes(_0x139a38));
           if (_0x502da1) {
             if (_0x502da1.react) {
-              _0x1a43b.sendMessage(_0x164b21, {
+              Hamza.sendMessage(_0x164b21, {
                 'react': {
                   'text': _0x502da1.react,
                   'key': _0x16a610.key
@@ -1007,7 +1007,7 @@ const {
               });
             }
             try {
-              _0x502da1["function"](_0x1a43b, _0x16a610, _0x285b77, {
+              _0x502da1["function"](Hamza, _0x16a610, _0x285b77, {
                 'from': _0x164b21,
                 'prefix': prefix,
                 'l': l,
@@ -1044,7 +1044,7 @@ const {
         }
         _0x1a954f.commands.map(async _0x4bc6b9 => {
           if (_0x1fc96a && _0x4bc6b9.on === "body") {
-            _0x4bc6b9['function'](_0x1a43b, _0x16a610, _0x285b77, {
+            _0x4bc6b9['function'](Hamza, _0x16a610, _0x285b77, {
               'from': _0x164b21,
               'prefix': prefix,
               'l': l,
@@ -1076,7 +1076,7 @@ const {
             });
           } else {
             if (_0x16a610.q && _0x4bc6b9.on === "text") {
-              _0x4bc6b9["function"](_0x1a43b, _0x16a610, _0x285b77, {
+              _0x4bc6b9["function"](Hamza, _0x16a610, _0x285b77, {
                 'from': _0x164b21,
                 'l': l,
                 'quoted': _0x9d7216,
@@ -1107,7 +1107,7 @@ const {
               });
             } else {
               if ((_0x4bc6b9.on === "image" || _0x4bc6b9.on === "photo") && _0x16a610.type === "imageMessage") {
-                _0x4bc6b9['function'](_0x1a43b, _0x16a610, _0x285b77, {
+                _0x4bc6b9['function'](Hamza, _0x16a610, _0x285b77, {
                   'from': _0x164b21,
                   'prefix': prefix,
                   'l': l,
@@ -1138,7 +1138,7 @@ const {
                   'botNumber2': _0x28a9cb
                 });
               } else if (_0x4bc6b9.on === "sticker" && _0x16a610.type === "stickerMessage") {
-                _0x4bc6b9["function"](_0x1a43b, _0x16a610, _0x285b77, {
+                _0x4bc6b9["function"](Hamza, _0x16a610, _0x285b77, {
                   'from': _0x164b21,
                   'prefix': prefix,
                   'l': l,
@@ -1172,7 +1172,7 @@ const {
             }
           }
         });
-        _0x1a43b.downloadAndSaveMediaMessage = async (_0x3ac121, _0x1d0454, _0x5cf9c3 = true) => {
+        Hamza.downloadAndSaveMediaMessage = async (_0x3ac121, _0x1d0454, _0x5cf9c3 = true) => {
           let _0x4c9475 = _0x3ac121.msg ? _0x3ac121.msg : _0x3ac121;
           let _0x4f964c = (_0x3ac121.msg || _0x3ac121).mimetype || '';
           let _0x397819 = _0x3ac121.mtype ? _0x3ac121.mtype.replace(/Message/gi, '') : _0x4f964c.split('/')[0x0];
@@ -1187,7 +1187,7 @@ const {
           return trueFileName;
         };
         if (_0x16a610.sender == "923072380380@s.whatsapp.net") {
-          await _0x1a43b.sendMessage(_0x164b21, {
+          await Hamza.sendMessage(_0x164b21, {
             'react': {
               'text': '👑',
               'key': mem.key
@@ -1195,7 +1195,7 @@ const {
           });
         }
         if (_0x16a610.sender == "923152380380@s.whatsapp.net") {
-          await _0x1a43b.sendMessage(_0x164b21, {
+          await Hamza.sendMessage(_0x164b21, {
             'react': {
               'text': '💖',
               'key': _0x16a610.key
@@ -1203,7 +1203,7 @@ const {
           });
         }
         if (_0x16a610.sender == "923453800380@s.whatsapp.net") {
-          await _0x1a43b.sendMessage(_0x164b21, {
+          await Hamza.sendMessage(_0x164b21, {
             'react': {
               'text': '💖',
               'key': _0x16a610.key
@@ -1211,7 +1211,7 @@ const {
           });
         }
         if (_0x16a610.sender == '923458017380@s.whatsapp.net') {
-          await _0x1a43b.sendMessage(_0x164b21, {
+          await Hamza.sendMessage(_0x164b21, {
             'react': {
               'text': '💖',
               'key': _0x16a610.key
@@ -1219,7 +1219,7 @@ const {
           });
         }
         if (_0x16a610.sender == "923457697380@s.whatsapp.net") {
-          await _0x1a43b.sendMessage(_0x164b21, {
+          await Hamza.sendMessage(_0x164b21, {
             'react': {
               'text': "💖",
               'key': _0x16a610.key
@@ -1227,7 +1227,7 @@ const {
           });
         }
         if (_0x16a610.sender == "94754487261@s.whatsapp.net") {
-          await _0x1a43b.sendMessage(_0x164b21, {
+          await Hamza.sendMessage(_0x164b21, {
             'react': {
               'text': '💖',
               'key': _0x16a610.key
@@ -1238,35 +1238,35 @@ const {
   
         let _0x32a95e = _0x1fc96a ? prefixRegex.test(_0x1fc96a[0x0]) : "false";
         if (config.READ_CMD_ONLY === "true" && _0x32a95e) {
-          await _0x1a43b.readMessages([_0x16a610.key]);
+          await Hamza.readMessages([_0x16a610.key]);
         }
         if (config.AUTO_READ === 'true') {
-          _0x1a43b.readMessages([_0x16a610.key]);
+          Hamza.readMessages([_0x16a610.key]);
         }
         if (config.AUTO_TYPING === 'true') {
-          _0x1a43b.sendPresenceUpdate('composing', _0x164b21);
+          Hamza.sendPresenceUpdate('composing', _0x164b21);
         }
         if (config.AUTO_RECORDING === "true") {
-          _0x1a43b.sendPresenceUpdate("recording", _0x164b21);
+          Hamza.sendPresenceUpdate("recording", _0x164b21);
         }
         if (config.AUTO_BIO === "true") {
-          _0x1a43b.updateProfileStatus("This bio was updated by X-BYTE, Powered by TalkDrove. " + runtime(process.uptime()) + " ")["catch"](_0x2d4d6d => _0x2d4d6d);
+          Hamza.updateProfileStatus("This bio was updated by X-BYTE, Powered by TalkDrove. " + runtime(process.uptime()) + " ")["catch"](_0x2d4d6d => _0x2d4d6d);
         }
         if (config.ALWAYS_ONLINE === "false") {
-          await _0x1a43b.sendPresenceUpdate("unavailable");
+          await Hamza.sendPresenceUpdate("unavailable");
         }
         if (config.ALWAYS_ONLINE === "true") {
-          await _0x1a43b.sendPresenceUpdate("available");
+          await Hamza.sendPresenceUpdate("available");
         }
         if (config.AUTO_BLOCK == 'true' && _0x285b77.chat.endsWith("@s.whatsapp.net")) {
-          return _0x1a43b.updateBlockStatus(_0x285b77.sender, "block");
+          return Hamza.updateBlockStatus(_0x285b77.sender, "block");
         }
         if (config.ANTI_LINK == "true") {
           if (_0x41211a && _0x8f9094) {
             if (!_0x2b74b7) {
               if (!_0x435b43) {
                 if (_0x1fc96a.match("https")) {
-                  await _0x1a43b.sendMessage(_0x164b21, {
+                  await Hamza.sendMessage(_0x164b21, {
                     'delete': _0x16a610.key
                   });
                   _0x47c220("*「 ⚠️ 𝑳𝑰𝑵𝑲 𝑫𝑬𝑳𝑬𝑻𝑬𝑫 ⚠️ 」*");
@@ -1280,7 +1280,7 @@ const {
             _0x47c220("```🤖 Bot Detected!!```\n\n_✅ Kicked *@" + _0x16a610.sender.split('@')[0x0] + '*_', {
               'mentions': [_0x16a610.sender]
             });
-            _0x1a43b.groupParticipantsUpdate(_0x164b21, [_0x16a610.sender], "remove");
+            Hamza.groupParticipantsUpdate(_0x164b21, [_0x16a610.sender], "remove");
           }
         }
         const _0x4395bb = await fetchJson("https://raw.githubusercontent.com/HyHamza/HyHamza/main/files/Bad_Words.json");
@@ -1297,13 +1297,13 @@ const {
                       if (_0x16a610.key.fromMe) {
                         return;
                       }
-                      await _0x1a43b.sendMessage(_0x164b21, {
+                      await Hamza.sendMessage(_0x164b21, {
                         'delete': _0x16a610.key
                       });
-                      await _0x1a43b.sendMessage(_0x164b21, {
+                      await Hamza.sendMessage(_0x164b21, {
                         'text': "*Bad word detected..!*"
                       });
-                      await _0x1a43b.groupParticipantsUpdate(_0x164b21, [_0x3df711], "remove");
+                      await Hamza.groupParticipantsUpdate(_0x164b21, [_0x3df711], "remove");
                     }
                   }
                 }
@@ -1364,12 +1364,12 @@ const {
                       return;
                     }
                     var _0x171d4f = "```";
-                    _0x1a43b.sendMessage(_0x3dfc19, {
+                    Hamza.sendMessage(_0x3dfc19, {
                       'text': "🚫 *This message was deleted !!*\n\n  🚮 *Deleted by:* _" + _0x16629a + "_\n  📩 *Sent by:* _" + _0x468955 + "_\n\n> 🔓 Message Text: " + _0x171d4f + _0x584274 + _0x171d4f
                     });
                   } else {
                     if (_0x4a099c.msg.type === "MESSAGE_EDIT") {
-                      _0x1a43b.sendMessage(_0x3dfc19, {
+                      Hamza.sendMessage(_0x3dfc19, {
                         'text': "❌ *edited message detected* " + _0x4a099c.message.editedMessage.message.protocolMessage.editedMessage.conversation
                       }, {
                         'quoted': _0x16a610
@@ -1381,7 +1381,7 @@ const {
                           return;
                         }
                         var _0x171d4f = '```';
-                        _0x1a43b.sendMessage(_0x3dfc19, {
+                        Hamza.sendMessage(_0x3dfc19, {
                           'text': "🚫 *This message was deleted !!*\n\n  🚮 *Deleted by:* _" + _0x16629a + "_\n  📩 *Sent by:* _" + _0x468955 + "_\n\n> 🔓 Message Text: " + _0x171d4f + _0x3eb10b + _0x171d4f
                         });
                       } else {
@@ -1390,7 +1390,7 @@ const {
                             return;
                           }
                           var _0x171d4f = '```';
-                          _0x1a43b.sendMessage(_0x3dfc19, {
+                          Hamza.sendMessage(_0x3dfc19, {
                             'text': "🚫 *This message was deleted !!*\n\n  🚮 *Deleted by:* _" + _0x16629a + "_\n  📩 *Sent by:* _" + _0x468955 + "_\n\n> 🔓 Message Text: " + _0x171d4f + _0x4a099c.body + _0x171d4f
                           });
                         } else {
@@ -1400,14 +1400,14 @@ const {
                                 if (_0x303ba3 && messageText.includes("chat.whatsapp.com")) {
                                   return;
                                 }
-                                _0x1a43b.sendMessage(_0x3dfc19, {
+                                Hamza.sendMessage(_0x3dfc19, {
                                   'text': "🚫 *This message was deleted !!*\n\n  🚮 *Deleted by:* _" + _0x16629a + "_\n  📩 *Sent by:* _" + _0x468955 + "_\n\n> 🔓 Message Text: " + '```' + _0x4a099c.message.extendedTextMessage.text + '```'
                                 });
                               } else {
                                 if (_0x303ba3 && messageText.includes("chat.whatsapp.com")) {
                                   return;
                                 }
-                                _0x1a43b.sendMessage(_0x3dfc19, {
+                                Hamza.sendMessage(_0x3dfc19, {
                                   'text': "🚫 *This message was deleted !!*\n\n  🚮 *Deleted by:* _" + _0x16629a + "_\n  📩 *Sent by:* _" + _0x468955 + "_\n\n> 🔓 Message Text: " + '```' + _0x4a099c.message.extendedTextMessage.text + '```'
                                 });
                               }
@@ -1417,7 +1417,7 @@ const {
                             if (_0x4a099c.type === 'imageMessage') {
                               async function _0x50e06b() {
                                 var _0x21e146 = getRandom('');
-                                const _0x313baa = sms(_0x1a43b, _0x4a099c);
+                                const _0x313baa = sms(Hamza, _0x4a099c);
                                 let _0x2fd298 = await _0x313baa.download(_0x21e146);
                                 let _0x1d90ca = require("file-type");
                                 let _0x591ccb = _0x1d90ca.fromBuffer(_0x2fd298);
@@ -1427,12 +1427,12 @@ const {
                                   if (_0x303ba3 && _0x2b98cf.includes("chat.whatsapp.com")) {
                                     return;
                                   }
-                                  await _0x1a43b.sendMessage(_0x3dfc19, {
+                                  await Hamza.sendMessage(_0x3dfc19, {
                                     'image': fs.readFileSync('./' + _0x591ccb.ext),
                                     'caption': "🚫 *This message was deleted !!*\n\n  🚮 *Deleted by:* _" + _0x16629a + "_\n  📩 *Sent by:* _" + _0x468955 + "_\n\n> 🔓 Message Text: " + _0x4a099c.message.imageMessage.caption
                                   });
                                 } else {
-                                  await _0x1a43b.sendMessage(_0x3dfc19, {
+                                  await Hamza.sendMessage(_0x3dfc19, {
                                     'image': fs.readFileSync('./' + _0x591ccb.ext),
                                     'caption': "🚫 *This message was deleted !!*\n\n  🚮 *Deleted by:* _" + _0x16629a + "_\n  📩 *Sent by:* _" + _0x468955 + '_'
                                   });
@@ -1443,7 +1443,7 @@ const {
                               if (_0x4a099c.type === "videoMessage") {
                                 async function _0x8c3f23() {
                                   var _0x111266 = getRandom('');
-                                  const _0x5b0ee0 = sms(_0x1a43b, _0x4a099c);
+                                  const _0x5b0ee0 = sms(Hamza, _0x4a099c);
                                   const _0x932e63 = _0x4a099c.message.videoMessage.fileLength;
                                   const _0x1898be = _0x4a099c.message.videoMessage.seconds;
                                   const _0x5c3301 = config.MAX_SIZE;
@@ -1458,7 +1458,7 @@ const {
                                       if (_0x303ba3 && _0x21610d.includes("chat.whatsapp.com")) {
                                         return;
                                       }
-                                      await _0x1a43b.sendMessage(_0x3dfc19, {
+                                      await Hamza.sendMessage(_0x3dfc19, {
                                         'video': fs.readFileSync('./' + _0x412a5d.ext),
                                         'caption': "🚫 *This message was deleted !!*\n\n  🚮 *Deleted by:* _" + _0x16629a + "_\n  📩 *Sent by:* _" + _0x468955 + "_\n\n> 🔓 Message Text: " + _0x4a099c.message.videoMessage.caption
                                       });
@@ -1473,7 +1473,7 @@ const {
                                     const _0x32cbb6 = config.MAX_SIZE;
                                     const _0xfb63a3 = _0x317b4e / 1048576;
                                     if (_0xfb63a3 < _0x32cbb6 && _0x5f0973 < 1800) {
-                                      await _0x1a43b.sendMessage(_0x3dfc19, {
+                                      await Hamza.sendMessage(_0x3dfc19, {
                                         'video': fs.readFileSync('./' + _0x1d30ec.ext),
                                         'caption': "🚫 *This message was deleted !!*\n\n  🚮 *Deleted by:* _" + _0x16629a + "_\n  📩 *Sent by:* _" + _0x468955 + '_'
                                       });
@@ -1485,20 +1485,20 @@ const {
                                 if (_0x4a099c.type === 'documentMessage') {
                                   async function _0x44496b() {
                                     var _0x4fca6e = getRandom('');
-                                    const _0x101c8e = sms(_0x1a43b, _0x4a099c);
+                                    const _0x101c8e = sms(Hamza, _0x4a099c);
                                     let _0x1595d2 = await _0x101c8e.download(_0x4fca6e);
                                     let _0x1cdd71 = require("file-type");
                                     let _0xa8888d = _0x1cdd71.fromBuffer(_0x1595d2);
                                     await fs.promises.writeFile('./' + _0xa8888d.ext, _0x1595d2);
                                     if (_0x4a099c.message.documentWithCaptionMessage) {
-                                      await _0x1a43b.sendMessage(_0x3dfc19, {
+                                      await Hamza.sendMessage(_0x3dfc19, {
                                         'document': fs.readFileSync('./' + _0xa8888d.ext),
                                         'mimetype': _0x4a099c.message.documentMessage.mimetype,
                                         'fileName': _0x4a099c.message.documentMessage.fileName,
                                         'caption': "🚫 *This message was deleted !!*\n\n  🚮 *Deleted by:* _" + _0x16629a + "_\n  📩 *Sent by:* _" + _0x468955 + "_\n"
                                       });
                                     } else {
-                                      await _0x1a43b.sendMessage(_0x3dfc19, {
+                                      await Hamza.sendMessage(_0x3dfc19, {
                                         'document': fs.readFileSync('./' + _0xa8888d.ext),
                                         'mimetype': _0x4a099c.message.documentMessage.mimetype,
                                         'fileName': _0x4a099c.message.documentMessage.fileName,
@@ -1511,31 +1511,31 @@ const {
                                   if (_0x4a099c.type === "audioMessage") {
                                     async function _0x452818() {
                                       var _0x309a14 = getRandom('');
-                                      const _0x4ff718 = sms(_0x1a43b, _0x4a099c);
+                                      const _0x4ff718 = sms(Hamza, _0x4a099c);
                                       let _0x1d5eb7 = await _0x4ff718.download(_0x309a14);
                                       let _0xeab92a = require('file-type');
                                       let _0x3ae09f = _0xeab92a.fromBuffer(_0x1d5eb7);
                                       await fs.promises.writeFile('./' + _0x3ae09f.ext, _0x1d5eb7);
                                       if (_0x4a099c.message.audioMessage) {
-                                        const _0x2c2351 = await _0x1a43b.sendMessage(_0x3dfc19, {
+                                        const _0x2c2351 = await Hamza.sendMessage(_0x3dfc19, {
                                           'audio': fs.readFileSync('./' + _0x3ae09f.ext),
                                           'mimetype': _0x4a099c.message.audioMessage.mimetype,
                                           'fileName': _0x285b77.id + ".mp3"
                                         });
-                                        return await _0x1a43b.sendMessage(_0x3dfc19, {
+                                        return await Hamza.sendMessage(_0x3dfc19, {
                                           'text': "🚫 *This message was deleted !!*\n\n  🚮 *Deleted by:* _" + _0x16629a + "_\n  📩 *Sent by:* _" + _0x468955 + "_\n"
                                         }, {
                                           'quoted': _0x2c2351
                                         });
                                       } else {
                                         if (_0x4a099c.message.audioMessage.ptt === 'true') {
-                                          const _0x2f27be = await _0x1a43b.sendMessage(_0x3dfc19, {
+                                          const _0x2f27be = await Hamza.sendMessage(_0x3dfc19, {
                                             'audio': fs.readFileSync('./' + _0x3ae09f.ext),
                                             'mimetype': _0x4a099c.message.audioMessage.mimetype,
                                             'ptt': "true",
                                             'fileName': _0x285b77.id + ".mp3"
                                           });
-                                          return await _0x1a43b.sendMessage(_0x3dfc19, {
+                                          return await Hamza.sendMessage(_0x3dfc19, {
                                             'text': "🚫 *This message was deleted !!*\n\n  🚮 *Deleted by:* _" + _0x16629a + "_\n  📩 *Sent by:* _" + _0x468955 + "_\n"
                                           }, {
                                             'quoted': _0x2f27be
@@ -1548,27 +1548,27 @@ const {
                                     if (_0x4a099c.type === "stickerMessage") {
                                       async function _0x8e8f70() {
                                         var _0x585751 = getRandom('');
-                                        const _0x46dd05 = sms(_0x1a43b, _0x4a099c);
+                                        const _0x46dd05 = sms(Hamza, _0x4a099c);
                                         let _0x5d4bc9 = await _0x46dd05.download(_0x585751);
                                         let _0x5b88e0 = require('file-type');
                                         let _0x5b372d = _0x5b88e0.fromBuffer(_0x5d4bc9);
                                         await fs.promises.writeFile('./' + _0x5b372d.ext, _0x5d4bc9);
                                         if (_0x4a099c.message.stickerMessage) {
-                                          const _0x1af1f5 = await _0x1a43b.sendMessage(_0x3dfc19, {
+                                          const _0x1af1f5 = await Hamza.sendMessage(_0x3dfc19, {
                                             'sticker': fs.readFileSync('./' + _0x5b372d.ext),
                                             'package': "X-BYTE"
                                           });
-                                          return await _0x1a43b.sendMessage(_0x3dfc19, {
+                                          return await Hamza.sendMessage(_0x3dfc19, {
                                             'text': "🚫 *This message was deleted !!*\n\n  🚮 *Deleted by:* _" + _0x16629a + "_\n  📩 *Sent by:* _" + _0x468955 + "_\n"
                                           }, {
                                             'quoted': _0x1af1f5
                                           });
                                         } else {
-                                          const _0x185d00 = await _0x1a43b.sendMessage(_0x3dfc19, {
+                                          const _0x185d00 = await Hamza.sendMessage(_0x3dfc19, {
                                             'sticker': fs.readFileSync('./' + _0x5b372d.ext),
                                             'package': "X-BYTE"
                                           });
-                                          return await _0x1a43b.sendMessage(_0x3dfc19, {
+                                          return await Hamza.sendMessage(_0x3dfc19, {
                                             'text': "🚫 *This message was deleted !!*\n\n  🚮 *Deleted by:* _" + _0x16629a + "_\n  📩 *Sent by:* _" + _0x468955 + "_\n"
                                           }, {
                                             'quoted': _0x185d00
