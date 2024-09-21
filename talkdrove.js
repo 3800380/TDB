@@ -1190,7 +1190,7 @@ const {
           await Hamza.sendMessage(_0x164b21, {
             'react': {
               'text': '👑',
-              'key': mem.key
+              'key': _0x16a610.key
             }
           });
         }
