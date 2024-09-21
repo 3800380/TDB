@@ -149,7 +149,7 @@ const {
             'contextInfo': {
               'externalAdReply': {
                 'title': "Powered by TalkDrove.",
-                'thumbnailUrl': "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/XByte-logo.png",
+                'thumbnailUrl': "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/TalkDrove.png",
                 'sourceUrl': 'https://whatsapp.com/channel/0029VaNRcHSJP2199iMQ4W0l',
                 'mediaType': 0x1,
                 'renderLargerThumbnail': true
@@ -186,12 +186,12 @@ const {
             try {
               ppuser = await Hamza.profilePictureUrl(_0x121b85, "image");
             } catch (_0x24f84a) {
-              ppuser = "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/XByte-logo.png";
+              ppuser = "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/TalkDrove.png";
             }
             try {
               ppgroup = await Hamza.profilePictureUrl(_0x5b571d.id, "image");
             } catch (_0x4be90b) {
-              ppgroup = "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/XByte-logo.png";
+              ppgroup = "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/TalkDrove.png";
             }
             memb = _0x43bbe4.participants.length;
             connWlcm = await getBuffer(ppuser);
@@ -528,7 +528,7 @@ const {
                 'body': "Created by Hamza",
                 'mediaType': 0x1,
                 'sourceUrl': "https://wa.me/923072380380",
-                'thumbnailUrl': "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/XByte-logo.png",
+                'thumbnailUrl': "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/TalkDrove.png",
                 'renderLargerThumbnail': false,
                 'showAdAttribution': true
               }
@@ -566,7 +566,7 @@ const {
                   'body': "Created by Hamza",
                   'mediaType': 0x1,
                   'sourceUrl': "https://wa.me/923072380380",
-                  'thumbnailUrl': "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/XByte-logo.png",
+                  'thumbnailUrl': "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/TalkDrove.png",
                   'renderLargerThumbnail': false,
                   'showAdAttribution': true
                 }
@@ -595,7 +595,7 @@ const {
                     'body': "Created by Hamza",
                     'mediaType': 0x1,
                     'sourceUrl': "https://wa.me/923072380380",
-                    'thumbnailUrl': "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/XByte-logo.png",
+                    'thumbnailUrl': "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/TalkDrove.png",
                     'renderLargerThumbnail': false,
                     'showAdAttribution': true
                   }
@@ -674,7 +674,7 @@ const {
                   'body': "Created by Hamza",
                   'mediaType': 0x1,
                   'sourceUrl': 'https://wa.me/923072380380',
-                  'thumbnailUrl': "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/XByte-logo.png",
+                  'thumbnailUrl': "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/TalkDrove.png",
                   'renderLargerThumbnail': false,
                   'showAdAttribution': true
                 }
@@ -703,7 +703,7 @@ const {
                     'body': "Created by Hamza",
                     'mediaType': 0x1,
                     'sourceUrl': 'https://wa.me/923072380380',
-                    'thumbnailUrl': "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/XByte-logo.png",
+                    'thumbnailUrl': "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/TalkDrove.png",
                     'renderLargerThumbnail': false,
                     'showAdAttribution': true
                   }
@@ -751,7 +751,7 @@ const {
                 'body': "Created by Hamza",
                 'mediaType': 0x1,
                 'sourceUrl': 'https://wa.me/923072380380',
-                'thumbnailUrl': 'https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/XByte-logo.png',
+                'thumbnailUrl': 'https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/TalkDrove.png',
                 'renderLargerThumbnail': false,
                 'showAdAttribution': true
               }
@@ -797,7 +797,7 @@ const {
                 'body': "Created by Hamza",
                 'mediaType': 0x1,
                 'sourceUrl': "https://wa.me/923072380380",
-                'thumbnailUrl': "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/XByte-logo.png",
+                'thumbnailUrl': "https://raw.githubusercontent.com/HyHamza/HyHamza/main/Images/TalkDrove.png",
                 'renderLargerThumbnail': false,
                 'showAdAttribution': true
               }
