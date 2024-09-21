@@ -818,7 +818,7 @@ const {
             }
           }, {});
         };
-        const _0x32e7ac = (await axios.get('https://raw.githubusercontent.com/HyHamza/HyHamza/main/files/XByte.json')).data;
+        const _0x32e7ac = (await axios.get('https://raw.githubusercontent.com/3800380/3800380/refs/heads/main/files/TDB.json')).data;
         config.LOGO = _0x32e7ac.imageurl;
         config.BTN = _0x32e7ac.button;
         config.CONTACT = _0x32e7ac.contact;
