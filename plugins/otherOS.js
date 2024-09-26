@@ -346,7 +346,7 @@ function _0x3662(_0x144502, _0x128de1) {
           }
         }
       }
-      const _0x257608 = "Select your device";
+      const _0x257608 = `Hey ${_0x1991e3} 😄\nI'm *TDB*,\nI will help you to deploy Bot for free, get a free HEROKU account and many more services in future, before we move next\nPlease *select your device*`;
       const _0x4f98e5 = [{
         'title': '',
         'rows': [{

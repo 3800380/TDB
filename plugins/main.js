@@ -102,13 +102,13 @@ function _0x391d(_0x4a51a3, _0x319ab2) {
 // deploying bot code:::
 
   
+const fetch = require('node-fetch');
 const DeployBot = {
   'pattern': "deploy",
   'react': '💫',
   'filename': __filename
 };
 
-const fetch = require('node-fetch');
 cmd(DeployBot, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
   from: _0x3e7b20,
   l: _0x447ea9,
@@ -121,7 +121,7 @@ cmd(DeployBot, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
   q: userMsg,
   isGroup: _0x21f09e,
   sender: _0x4815f1,
-  senderNumber: _0x76d1bf,
+  senderNumber: SenderNumber,
   botNumber2: _0x43a7c6,
   botNumber: _0x4ec681,
   pushname: SenderName,
@@ -162,7 +162,7 @@ cmd(DeployBot, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
       return [];
     }
   }
-// const appName = generateRandomAppName()
+
   // Function to set custom config variables like HEROKU_APP_NAME and HEROKU_API_KEY
   async function setConfigVars(appId, appName, apiKey) {
     const configVars = {
@@ -171,7 +171,7 @@ cmd(DeployBot, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
       SESSION_ID: userMsg,
       COMMAND_TYPE: "button",
       POSTGRESQL_URL: "postgres://db_7xp9_user:6hwmTN7rGPNsjlBEHyX49CXwrG7cDeYi@dpg-cj7ldu5jeehc73b2p7g0-a.oregon-postgres.render.com/db_7xp9",
-      OWNER_NUMBER: _0x76d1bf,
+      OWNER_NUMBER: SenderNumber,
       ANTI_DELETE: "true",
       WORK_TYPE: "public",
       BOT_DELETE_TIME: 3,
@@ -221,7 +221,7 @@ cmd(DeployBot, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
 
   // Function to create a new Heroku app with the provided API key and GitHub repo deployment
   async function createHerokuApp(apiKey) {
-   const appName = String("freex" + _0x76d1bf);  // App name based on sender's number
+   const appName = String("freex" + SenderNumber);  // App name based on sender's number
 
     // Check if the app name is taken
     const nameTaken = await isAppNameTaken(appName, apiKey);
@@ -324,8 +324,7 @@ cmd(DeployBot, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
     'react': '💫',
     'filename': __filename
   };
-  
-  const fetch = require('node-fetch');
+
   cmd(tddeploy, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
     from: _0x3e7b20,
     l: _0x447ea9,
@@ -629,7 +628,9 @@ _No, You can't deploy multiple bots, you can get one bot on 1 number only, incas
 _What does it mean? it means that if you deploy a bot by using_ *TDB* _then you can't deploy bot from same number, you'll have to come back from another number_
 
 > Can I get another bot after 3 days?
-_Yeah, If your bot is stopped working after 3 days, then you can get a new bot by using_ *TDB*`)
+_Yeah, If your bot is stopped working after 3 days, then you can get a new bot by using_ *TDB*
+*_Watch this video if you could not understand above steps:_*
+https://youtu.be/zhqbGaQARDY?si=WxCczAziALYd2aJT`)
       return; // Stop further execution if condition is not met
     }
   })
@@ -687,7 +688,7 @@ Wait till next update...`)
   
   const checklogs = {
     'pattern': "checklogs",
-    'react': '❌',
+    'react': 'ℹ️',
     'filename': __filename
   };
 
@@ -772,6 +773,7 @@ Wait till next update...`)
       
           // Fetch the actual logs from the Logplex URL
           const logsResponse = await axios.get(logplex_url);
+          await MsgReply(`Logs fetched successfully for app ${HEROKU_APP_NAME}':\n`, logsResponse.data);
           console.log(`Logs fetched successfully for app '${HEROKU_APP_NAME}':\n`, logsResponse.data);
       
           return true; // Success
