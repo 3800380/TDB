@@ -1,6 +1,7 @@
 
 const config = require("../settings");
 const os = require('os');
+const axios = require("axios");
 const {
   cmd,
   commands
@@ -72,7 +73,7 @@ const si = require("systeminformation");
   };
   cmd(_0x542b06, async (_0x3a3ae0, _0x5d149b, _0x3b8a7f, {
     from: _0x5dacad,
-    prefix: _0xc543ce,
+    prefix: xPrefix,
     l: _0x4e3d14,
     quoted: _0x2ad67d,
     body: _0x4a273d,
@@ -110,7 +111,7 @@ const si = require("systeminformation");
           }
         }
       }
-      const _0x32d4b0 = "> *Version:* " + require("../package.json").version + "\n> *Memory:* " + (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2) + "MB / " + Math.round(require('os').totalmem / 1024 / 1024) + "MB\n> *Runtime:* " + runtime(process.uptime()) + "\n> *Platform:* " + hostname;
+      const _0x32d4b0 = `Hey ${_0x457280} 😄\nI'm *TDB*,\nSelect a menu type and get your free bot now!!!`;
       const _0x463791 = [];
       const _0x181fa0 = new Map();
       for (let _0x37434c = 0; _0x37434c < 1; _0x37434c++) {
@@ -130,13 +131,13 @@ const si = require("systeminformation");
           header: "Select menu type",
           title: "HEROKU MENU",
           description: "Show HEROKU menu",
-          id: ".showandroidherokumenu"
+          id: xPrefix + "showandroidherokumenu"
         };
         const _0x48e60c = {
           header: '',
           title: "BOT MENU",
           description: "Show bot menu",
-          id: ".showandroidbotmenu"
+          id: xPrefix + "showandroidbotmenu"
         };
     
         _0x10cdf6.push(_0x41d75d);
@@ -321,113 +322,10 @@ const si = require("systeminformation");
       console.log(_0x11acf9);
     }
   });
-  const _0x5344f3 = {
-    'pattern': 'sc',
-    'react': "🗃️",
-    'alias': ["repo", "script", 'status'],
-    'desc': "Get bot's command list.",
-    'category': "main",
-    'use': '.sc',
-    'filename': __filename
-  };
-  cmd(_0x5344f3, async (_0x4260e9, _0x154ce6, _0x3e76a8, {
-    from: _0x27c70b,
-    prefix: _0x14d077,
-    l: _0x41af0d,
-    quoted: _0x26228e,
-    body: _0x17b2e0,
-    isCmd: _0x2ceca4,
-    command: _0x207c52,
-    args: _0x5b900b,
-    q: _0x2477b9,
-    isGroup: _0x19448d,
-    sender: _0x83aa36,
-    senderNumber: _0x1adfc9,
-    botNumber2: _0x49e505,
-    botNumber: _0x39be84,
-    pushname: _0x79e700,
-    isMe: _0x563e72,
-    isOwner: _0x56f7ed,
-    groupMetadata: _0x39f1a1,
-    groupName: _0xffa16b,
-    participants: _0x1a7c06,
-    groupAdmins: _0x1c775f,
-    isBotAdmins: _0x3161e9,
-    isAdmins: _0x430d37,
-    reply: _0x1c972b
-  }) => {
-    try {
-      if (os.hostname().length == 0xc) {
-        hostname = "replit";
-      } else if (os.hostname().length == 0x24) {
-        hostname = "heroku";
-      } else if (os.hostname().length == 0x8) {
-        hostname = "koyeb";
-      } else {
-        hostname = os.hostname();
-      }
-      const _0x5c209f = "```👋 Hello " + _0x79e700 + '```' + "\n\n*I'm Here TDB..*\n  \n> *Version:* " + require('../package.json').version + "\n> *Memory:* " + (process.memoryUsage().heapUsed / 0x400 / 0x400).toFixed(0x2) + "MB / " + Math.round(require('os').totalmem / 0x400 / 0x400) + "MB\n> *Runtime:* " + runtime(process.uptime()) + "\n> *Platform:* " + hostname + "\nYou can get TDB for free, follow TalkDrove for more updates ";
-      let _0x4658c8 = [{
-        'name': "cta_url",
-        'buttonParamsJson': JSON.stringify({
-          'display_text': "YT CHANNEL",
-          'url': "https://youtube.com/@talkdrove",
-          'merchant_url': "https://youtube.com/@talkdrove"
-        })
-      }, {
-        'name': "cta_url",
-        'buttonParamsJson': JSON.stringify({
-          'display_text': "FB PAGE",
-          'url': "https://www.facebook.com/talkdrove",
-          'merchant_url': "https://www.facebook.com/talkdrove"
-        })
-      }, {
-        'name': "cta_url",
-        'buttonParamsJson': JSON.stringify({
-          'display_text': "WA NUMBER",
-          'url': "https://wa.me/923072380380",
-          'merchant_url': "https://wa.me/923072380380"
-        })
-      }, {
-        'name': "cta_url",
-        'buttonParamsJson': JSON.stringify({
-          'display_text': "WA CHANNEL",
-          'url': "https://whatsapp.com/channel/0029VaNRcHSJP2199iMQ4W0l",
-          'merchant_url': 'https://whatsapp.com/channel/0029VaNRcHSJP2199iMQ4W0l'
-        })
-      }, {
-        'name': 'cta_url',
-        'buttonParamsJson': JSON.stringify({
-          'display_text': "BOT REPO",
-          'url': 'https://github.com/HyHamza/TDB',
-          'merchant_url': 'https://github.com/HyHamza/TDB'
-        })
-      }, {
-        'name': "quick_reply",
-        'buttonParamsJson': JSON.stringify({
-          'display_text': "Go Menu",
-          'id': _0x14d077 + "menu"
-        })
-      }];
-      const _0x9e84be = {
-        'image': config.LOGO,
-        'header': '',
-        'footer': config.FOOTER,
-        'body': _0x5c209f
-      };
-      return await _0x4260e9.sendButtonMessage(_0x27c70b, _0x4658c8, _0x3e76a8, _0x9e84be);
-    } catch (_0x1a0aea) {
-      _0x1c972b("*Error !!*");
-      console.log(_0x1a0aea);
-    }
-  });
 
-function _0x3737b7(_0x1f9e69, _0x5c440f, _0x2cbdf9, _0x38fe15, _0x809247) {
-  return _0x65d3(_0x1f9e69 - 0x138, _0x809247);
-}
 
 // Talkdrove:) Created by Hamza
-const axios = require("axios");
+
 cmd({
   'pattern': "pair",
   'react': "🆗️",
@@ -485,7 +383,7 @@ const HerokuMenu = {
 };
 cmd(HerokuMenu, async (_0x3a3ae0, _0x5d149b, _0x3b8a7f, {
   from: _0x5dacad,
-  prefix: _0xc543ce,
+  prefix: xPrefix,
   l: _0x4e3d14,
   quoted: _0x2ad67d,
   body: _0x4a273d,
@@ -532,13 +430,13 @@ cmd(HerokuMenu, async (_0x3a3ae0, _0x5d149b, _0x3b8a7f, {
         header: "Select service type",
         title: "FREE HEROKU",
         description: "Account",
-        id: ".notavailable"
+        id: xPrefix + "notavailable"
       };
       const _0x48e60c = {
         header: '',
         title: "PAID HEROKU",
         description: "Account",
-        id: ".notavailable"
+        id: xPrefix + "notavailable"
       };
   
       _0x10cdf6.push(_0x41d75d);
@@ -588,7 +486,7 @@ const botMenu = {
 };
 cmd(botMenu, async (_0x3a3ae0, _0x5d149b, _0x3b8a7f, {
   from: _0x5dacad,
-  prefix: _0xc543ce,
+  prefix: xPrefix,
   l: _0x4e3d14,
   quoted: _0x2ad67d,
   body: _0x4a273d,
@@ -635,13 +533,13 @@ cmd(botMenu, async (_0x3a3ae0, _0x5d149b, _0x3b8a7f, {
         header: "Select service type",
         title: "FREE BOT",
         description: "Want free bot",
-        id: ".freebot"
+        id: xPrefix + "freebotandroid"
       };
       const _0x48e60c = {
         header: '',
         title: "PAID BOT",
         description: "Want paid bot",
-        id: ".notavailable"
+        id: xPrefix + "notavailable"
       };
   
       _0x10cdf6.push(_0x41d75d);
@@ -682,3 +580,317 @@ cmd(botMenu, async (_0x3a3ae0, _0x5d149b, _0x3b8a7f, {
 
 
 
+// freeandroidandroid
+
+
+const freeandroidbot = {
+  pattern: "freebotandroid",
+  react: "🤖",
+  category: "main",
+  use: ".menu",
+  filename: __filename
+};
+cmd(freeandroidbot, async (_0x3a3ae0, _0x5d149b, _0x3b8a7f, {
+  from: _0x5dacad,
+  prefix: xPrefix,
+  l: _0x4e3d14,
+  quoted: _0x2ad67d,
+  body: _0x4a273d,
+  isCmd: _0x58ff10,
+  command: _0xb57a1c,
+  args: _0x3f9f32,
+  q: _0xe6c526,
+  isGroup: _0x512021,
+  sender: _0x13861b,
+  senderNumber: _0x2351ba,
+  botNumber2: _0x504e4b,
+  botNumber: _0x1f3279,
+  pushname: _0x457280,
+  isMe: _0x2fe93b,
+  isOwner: _0x39abc8,
+  groupMetadata: _0x592529,
+  groupName: _0xefee68,
+  participants: _0x4ed2b6,
+  groupAdmins: _0x5e156c,
+  isBotAdmins: _0x447245,
+  isAdmins: _0x40584b,
+  reply: _0x34b7e1
+}) => {
+  try {
+  
+    const _0x32d4b0 = 'To deploy bot on your number first get session id by typing command `.pair and your number with country code` then link it with your WhatsApp account*\n\nThen type `.deploy` with your session id which should be starts with Byte;;;*\n*and then wait for some time the bot will be deployed*';
+    const _0x463791 = [];
+    const _0x181fa0 = new Map();
+    for (let _0x37434c = 0; _0x37434c < 1; _0x37434c++) {
+      const _0x57d5c5 = commands[_0x37434c];
+      if (!_0x57d5c5.dontAddCommandList && _0x57d5c5.pattern !== undefined) {
+        const _0x1c783d = _0x57d5c5.category.toUpperCase();
+        if (!_0x181fa0.has(_0x1c783d)) {
+          _0x463791.push(_0x1c783d);
+          _0x181fa0.set(_0x1c783d, []);
+        }
+        _0x181fa0.get(_0x1c783d).push(_0x57d5c5.pattern);
+      }
+    }
+    const _0x10cdf6 = [];
+    for (const _0x7dca68 of _0x463791) {
+      const _0x41d75d = {
+        header: "Select service type",
+        title: "More information",
+        description: "Get more info to deploy free bot",
+        id: xPrefix + "freebotmoreinfo"
+      };
+      const _0x48e60c = {
+        header: '',
+        title: "BOT SETTINGS",
+        description: "Show all Bot settings",
+        id: xPrefix + "androidbotsettings"
+      };
+  
+      _0x10cdf6.push(_0x41d75d);
+      _0x10cdf6.push(_0x48e60c);
+    
+    }
+    const _0x5dce00 = {
+      display_text: config.BTN,
+      url: config.BTNURL,
+      merchant_url: config.BTNURL
+    };
+    let _0x22d798 = [{
+      'name': "cta_url",
+      'buttonParamsJson': JSON.stringify(_0x5dce00)
+    }, {
+      'name': "single_select",
+      'buttonParamsJson': JSON.stringify({
+        'title': "Select a service :)",
+        'sections': [{
+          'title': "Please select a service",
+          'highlight_label': "Hot 🔥",
+          'rows': _0x10cdf6
+        }]
+      })
+    }];
+    const _0x54ced1 = {
+      image: config.LOGO,
+      header: '',
+      footer: config.FOOTER,
+      body: _0x32d4b0
+    };
+    return await _0x3a3ae0.sendButtonMessage(_0x5dacad, _0x22d798, _0x3b8a7f, _0x54ced1);
+  } catch (_0x104d7e) {
+    _0x34b7e1("*Oops, guys I got an error*");
+    console.log(_0x104d7e);
+  }
+});
+
+// BOT SETTINGS
+
+
+const androidbotsettings = {
+  pattern: "androidbotsettings",
+  react: "🤖",
+  category: "main",
+  use: ".menu",
+  filename: __filename
+};
+cmd(androidbotsettings, async (_0x3a3ae0, _0x5d149b, _0x3b8a7f, {
+  from: _0x5dacad,
+  prefix: xPrefix,
+  l: _0x4e3d14,
+  quoted: _0x2ad67d,
+  body: _0x4a273d,
+  isCmd: _0x58ff10,
+  command: _0xb57a1c,
+  args: _0x3f9f32,
+  q: _0xe6c526,
+  isGroup: _0x512021,
+  sender: _0x13861b,
+  senderNumber: _0x2351ba,
+  botNumber2: _0x504e4b,
+  botNumber: _0x1f3279,
+  pushname: _0x457280,
+  isMe: _0x2fe93b,
+  isOwner: _0x39abc8,
+  groupMetadata: _0x592529,
+  groupName: _0xefee68,
+  participants: _0x4ed2b6,
+  groupAdmins: _0x5e156c,
+  isBotAdmins: _0x447245,
+  isAdmins: _0x40584b,
+  reply: _0x34b7e1
+}) => {
+  try {
+  
+    const _0x32d4b0 = 'Hi there,\nThe below bots are available, to change the settings first select a bot*';
+    const _0x463791 = [];
+    const _0x181fa0 = new Map();
+    for (let _0x37434c = 0; _0x37434c < 1; _0x37434c++) {
+      const _0x57d5c5 = commands[_0x37434c];
+      if (!_0x57d5c5.dontAddCommandList && _0x57d5c5.pattern !== undefined) {
+        const _0x1c783d = _0x57d5c5.category.toUpperCase();
+        if (!_0x181fa0.has(_0x1c783d)) {
+          _0x463791.push(_0x1c783d);
+          _0x181fa0.set(_0x1c783d, []);
+        }
+        _0x181fa0.get(_0x1c783d).push(_0x57d5c5.pattern);
+      }
+    }
+    const _0x10cdf6 = [];
+    for (const _0x7dca68 of _0x463791) {
+      const _0x41d75d = {
+        header: "Select a BOT",
+        title: "X-BYTE",
+        description: "Show settings for X-BYTE",
+        id: xPrefix + "androidxbytesettings"
+      };
+      const _0x48e60c = {
+        header: '',
+        title: "BYTE-LITE",
+        description: "Show settings for BYTE-LITE",
+        id: xPrefix + "notavailable"
+      };
+  
+      _0x10cdf6.push(_0x41d75d);
+      _0x10cdf6.push(_0x48e60c);
+    
+    }
+    const _0x5dce00 = {
+      display_text: config.BTN,
+      url: config.BTNURL,
+      merchant_url: config.BTNURL
+    };
+    let _0x22d798 = [{
+      'name': "cta_url",
+      'buttonParamsJson': JSON.stringify(_0x5dce00)
+    }, {
+      'name': "single_select",
+      'buttonParamsJson': JSON.stringify({
+        'title': "Select a BOT :)",
+        'sections': [{
+          'title': "Please select a BOT",
+          'highlight_label': "Hot 🔥",
+          'rows': _0x10cdf6
+        }]
+      })
+    }];
+    const _0x54ced1 = {
+      image: config.LOGO,
+      header: '',
+      footer: config.FOOTER,
+      body: _0x32d4b0
+    };
+    return await _0x3a3ae0.sendButtonMessage(_0x5dacad, _0x22d798, _0x3b8a7f, _0x54ced1);
+  } catch (_0x104d7e) {
+    _0x34b7e1("*Oops, guys I got an error*");
+    console.log(_0x104d7e);
+  }
+});
+
+// X-BYTE ANDROID SETTINGS
+
+const androidxbytesettings = {
+  pattern: "androidxbytesettings",
+  react: "🤖",
+  category: "main",
+  use: ".menu",
+  filename: __filename
+};
+cmd(androidxbytesettings, async (_0x3a3ae0, _0x5d149b, _0x3b8a7f, {
+  from: _0x5dacad,
+  prefix: xPrefix,
+  l: _0x4e3d14,
+  quoted: _0x2ad67d,
+  body: _0x4a273d,
+  isCmd: _0x58ff10,
+  command: _0xb57a1c,
+  args: _0x3f9f32,
+  q: _0xe6c526,
+  isGroup: _0x512021,
+  sender: _0x13861b,
+  senderNumber: _0x2351ba,
+  botNumber2: _0x504e4b,
+  botNumber: _0x1f3279,
+  pushname: _0x457280,
+  isMe: _0x2fe93b,
+  isOwner: _0x39abc8,
+  groupMetadata: _0x592529,
+  groupName: _0xefee68,
+  participants: _0x4ed2b6,
+  groupAdmins: _0x5e156c,
+  isBotAdmins: _0x447245,
+  isAdmins: _0x40584b,
+  reply: _0x34b7e1
+}) => {
+  try {
+  
+    const _0x32d4b0 = '*Hi there,\nThese settings are available for the X-BYTE*';
+    const _0x463791 = [];
+    const _0x181fa0 = new Map();
+    for (let _0x37434c = 0; _0x37434c < 1; _0x37434c++) {
+      const _0x57d5c5 = commands[_0x37434c];
+      if (!_0x57d5c5.dontAddCommandList && _0x57d5c5.pattern !== undefined) {
+        const _0x1c783d = _0x57d5c5.category.toUpperCase();
+        if (!_0x181fa0.has(_0x1c783d)) {
+          _0x463791.push(_0x1c783d);
+          _0x181fa0.set(_0x1c783d, []);
+        }
+        _0x181fa0.get(_0x1c783d).push(_0x57d5c5.pattern);
+      }
+    }
+    const _0x10cdf6 = [];
+    for (const _0x7dca68 of _0x463791) {
+      const _0x41d75d = {
+        header: "Settings",
+        title: "DELETE X-BYTE",
+        description: "Delete my X-BYTE",
+        id: xPrefix + "deletexbyte"
+      };
+      const _0x48e60c = {
+        header: '',
+        title: "RESTART X-BYTE",
+        description: "RESTART MY X-BYTE",
+        id: xPrefix + "restartxbyte"
+      };
+      const deployxbyte = {
+        header: '',
+        title: "REDEPLOY X-BYTE",
+        description: "REDEPLOY MY X-BYTE",
+        id: xPrefix + "redeployxbyte"
+      };
+  
+      _0x10cdf6.push(_0x41d75d);
+      _0x10cdf6.push(_0x48e60c);
+      _0x10cdf6.push(deployxbyte);
+    
+    }
+    const _0x5dce00 = {
+      display_text: config.BTN,
+      url: config.BTNURL,
+      merchant_url: config.BTNURL
+    };
+    let _0x22d798 = [{
+      'name': "cta_url",
+      'buttonParamsJson': JSON.stringify(_0x5dce00)
+    }, {
+      'name': "single_select",
+      'buttonParamsJson': JSON.stringify({
+        'title': "Select a setting :)",
+        'sections': [{
+          'title': "Please select a setting",
+          'highlight_label': "Hot 🔥",
+          'rows': _0x10cdf6
+        }]
+      })
+    }];
+    const _0x54ced1 = {
+      image: config.LOGO,
+      header: '',
+      footer: config.FOOTER,
+      body: _0x32d4b0
+    };
+    return await _0x3a3ae0.sendButtonMessage(_0x5dacad, _0x22d798, _0x3b8a7f, _0x54ced1);
+  } catch (_0x104d7e) {
+    _0x34b7e1("*Oops, guys I got an error*");
+    console.log(_0x104d7e);
+  }
+});
