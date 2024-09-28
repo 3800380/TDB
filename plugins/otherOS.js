@@ -259,11 +259,11 @@ function _0x3662(_0x144502, _0x128de1) {
         'title': '',
         'rows': [{
           'title': '1',
-          'rowId': "otherosherokumenu",
+          'rowId':_0x38ba5b + "otherosherokumenu",
           'description': "HEROKU MENU"
         }, {
           'title': '2',
-          'rowId': "otherosbotsmenu",
+          'rowId':_0x38ba5b + "otherosbotsmenu",
           'description': "BOT MENU"
         }]
       }];
@@ -307,8 +307,8 @@ function _0x3662(_0x144502, _0x128de1) {
   // Start 
 
   const mainMenu = {
-    pattern: "otherosherokumenu",
-    alias: ["menu", 'hi', 'menuu', 'mainmenu', 'main', 'hey'],
+    pattern: "start",
+    alias: ["menu", 'hi', 'menuu', 'mainmenu', 'main'],
     filename: __filename
   };
   cmd(mainMenu, async (_0x2dda0c, _0x273d53, _0x29736e, {
@@ -356,11 +356,11 @@ function _0x3662(_0x144502, _0x128de1) {
         'title': '',
         'rows': [{
           'title': '1',
-          'rowId': "androidmenu",
+          'rowId':_0x38ba5b + "androidmenu",
           'description': "Android"
         }, {
           'title': '2',
-          'rowId': "otherosmenu",
+          'rowId':_0x38ba5b + "otherosmenu",
           'description': "Other"
         }]
       }];
@@ -448,11 +448,11 @@ cmd(otherherokumenu, async (_0x2dda0c, _0x273d53, _0x29736e, {
       'title': '',
       'rows': [{
         'title': '1',
-        'rowId': "freeheroku",
+        'rowId':_0x38ba5b + "freeheroku",
         'description': "FREE HEROKU"
       }, {
         'title': '2',
-        'rowId': "paidheroku",
+        'rowId':_0x38ba5b + "paidheroku",
         'description': "PAID HEROKU"
       }]
     }];
@@ -538,11 +538,11 @@ cmd(otherbotmenu, async (_0x2dda0c, _0x273d53, _0x29736e, {
       'title': '',
       'rows': [{
         'title': '1',
-        'rowId': "freebototheros",
+        'rowId':_0x38ba5b + "freebototheros",
         'description': "FREE BOT"
       }, {
         'title': '2',
-        'rowId': "notavailable",
+        'rowId':_0x38ba5b + "notavailable",
         'description': "PAID BOT"
       }]
     }];
@@ -627,17 +627,17 @@ cmd(freebot, async (_0x2dda0c, _0x273d53, _0x29736e, {
         }
       }
     }
-    const _0x257608 = "*To deploy bot on your number first get session id by typing command `.pair and your number with country code` then link it with your WhatsApp account*\n\nThen type `.deploy` with your session id which should be starts with Byte;;;*\n*and then wait for some time the bot will be deployed*";
+    const _0x257608 = "*To deploy bot on your number first get session id by typing command `.pair and your number with country code` then link it with your WhatsApp account*\n\nThen type `.deploy` with your session id which should be starts with Byte;;;*\n*And then wait for some time the bot will be deployed*";
     const _0x4f98e5 = [{
       'title': '',
       'rows': [{
         'title': '1',
-        'rowId': "freebotmoreinfo",
+        'rowId':_0x38ba5b + "freebotmoreinfo",
         'description': "More info"
       },
       {
         'title': '2',
-        'rowId': "botsettings",
+        'rowId':_0x38ba5b + "botsettings",
         'description': "BOT SETTINGS"
       }]
     }];
@@ -677,6 +677,7 @@ cmd(freebot, async (_0x2dda0c, _0x273d53, _0x29736e, {
 
 const botsettings = {
   pattern: "botsettings",
+  alias: ['botsetting', 'xbytesetting'],
   desc: "Get bot's command list.",
   category: "main",
   use: ".menu",
@@ -722,17 +723,17 @@ cmd(botsettings, async (_0x2dda0c, _0x273d53, _0x29736e, {
         }
       }
     }
-    const _0x257608 = "*Hi there,\nThe below bots are available, to change the settings first select a bot*";
+    const _0x257608 = "*Hi there,*\n*The below bots are available, to change the settings*\n*First select a bot*";
     const _0x4f98e5 = [{
       'title': '',
       'rows': [{
         'title': '1',
-        'rowId': "xbytesettings",
+        'rowId':_0x38ba5b + "xbytesettings",
         'description': "X-BYTE SETTINGS"
       },
       {
         'title': '2',
-        'rowId': "notavailable",
+        'rowId':_0x38ba5b + "notavailable",
         'description': "BYTE-LITE SETTINGS"
       }]
     }];
@@ -823,17 +824,17 @@ cmd(xbytesettings, async (_0x2dda0c, _0x273d53, _0x29736e, {
       'title': '',
       'rows': [{
         'title': '1',
-        'rowId': "deletexbyte",
+        'rowId':_0x38ba5b + "deletexbyte",
         'description': "DELETE X-BYTE"
       },
       {
         'title': '2',
-        'rowId': "restartxbyte",
+        'rowId':_0x38ba5b + "restartxbyte",
         'description': "RESTART X-BYTE"
       },
       {
         'title': '3',
-        'rowId': "redeployxbyte",
+        'rowId':_0x38ba5b + "redeployxbyte",
         'description': "REDEPLOY X-BYTE"
       },]
     }];
