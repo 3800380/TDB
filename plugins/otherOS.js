@@ -254,16 +254,16 @@ function _0x3662(_0x144502, _0x128de1) {
           }
         }
       }
-      const _0x257608 = "*_TalkDrove-BOT_*";
+      const _0x257608 = `Hey ${_0x1991e3} 👋\nYou selected Other OS, the below options are available`;
       const _0x4f98e5 = [{
         'title': '',
         'rows': [{
           'title': '1',
-          'rowId': _0x38ba5b + "otherosherokumenu",
+          'rowId': "otherosherokumenu",
           'description': "HEROKU MENU"
         }, {
           'title': '2',
-          'rowId': _0x38ba5b + "otherosbotsmenu",
+          'rowId': "otherosbotsmenu",
           'description': "BOT MENU"
         }]
       }];
@@ -300,13 +300,18 @@ function _0x3662(_0x144502, _0x128de1) {
   });
   
   
-  const start = {
-    pattern: "start",
-    react: "👋🏻",
-    alias: ["menu", 'hi', 'menuu', 'mainmenu', 'main'],
+ 
+  
+
+  
+  // Start 
+
+  const mainMenu = {
+    pattern: "otherosherokumenu",
+    alias: ["menu", 'hi', 'menuu', 'mainmenu', 'main', 'hey'],
     filename: __filename
   };
-  cmd(start, async (_0x2dda0c, _0x273d53, _0x29736e, {
+  cmd(mainMenu, async (_0x2dda0c, _0x273d53, _0x29736e, {
     from: _0x1a4b4b,
     prefix: _0x38ba5b,
     l: _0x39b0f9,
@@ -346,16 +351,16 @@ function _0x3662(_0x144502, _0x128de1) {
           }
         }
       }
-      const _0x257608 = `Hey ${_0x1991e3} 😄\nI'm *TDB*,\nI will help you to deploy Bot for free, get a free HEROKU account and many more services in future, before we move next\nPlease *select your device*`;
+      const _0x257608 = `Hey ${_0x1991e3} 😄\nI'm *TDB*,\nI will help you to deploy Bot for free, get a free HEROKU account and many more services in future, before we move next\n*Please select your device*`;
       const _0x4f98e5 = [{
         'title': '',
         'rows': [{
           'title': '1',
-          'rowId': _0x38ba5b + "androidmenu",
+          'rowId': "androidmenu",
           'description': "Android"
         }, {
           'title': '2',
-          'rowId': _0x38ba5b + "otherosmenu",
+          'rowId': "otherosmenu",
           'description': "Other"
         }]
       }];
@@ -388,7 +393,8 @@ function _0x3662(_0x144502, _0x128de1) {
       _0x39b0f9(_0x366082);
     }
   });
-  
+
+
 //// HEROKU
 
 
@@ -442,11 +448,11 @@ cmd(otherherokumenu, async (_0x2dda0c, _0x273d53, _0x29736e, {
       'title': '',
       'rows': [{
         'title': '1',
-        'rowId': _0x38ba5b + "freeheroku",
+        'rowId': "freeheroku",
         'description': "FREE HEROKU"
       }, {
         'title': '2',
-        'rowId': _0x38ba5b + "paidheroku",
+        'rowId': "paidheroku",
         'description': "PAID HEROKU"
       }]
     }];
@@ -532,11 +538,11 @@ cmd(otherbotmenu, async (_0x2dda0c, _0x273d53, _0x29736e, {
       'title': '',
       'rows': [{
         'title': '1',
-        'rowId': _0x38ba5b + "freebot",
+        'rowId': "freebototheros",
         'description': "FREE BOT"
       }, {
         'title': '2',
-        'rowId': _0x38ba5b + "paidbot",
+        'rowId': "notavailable",
         'description': "PAID BOT"
       }]
     }];
@@ -575,7 +581,7 @@ cmd(otherbotmenu, async (_0x2dda0c, _0x273d53, _0x29736e, {
 // FREE BOT
 
 const freebot = {
-  pattern: "freebot",
+  pattern: "freebototheros",
   desc: "Get bot's command list.",
   category: "main",
   use: ".menu",
@@ -626,9 +632,210 @@ cmd(freebot, async (_0x2dda0c, _0x273d53, _0x29736e, {
       'title': '',
       'rows': [{
         'title': '1',
-        'rowId': _0x38ba5b + "freebotmoreinfo",
+        'rowId': "freebotmoreinfo",
         'description': "More info"
+      },
+      {
+        'title': '2',
+        'rowId': "botsettings",
+        'description': "BOT SETTINGS"
       }]
+    }];
+    const _0x9cb1f2 = {
+      url: config.LOGO
+    };
+    const _0x3d3859 = {
+      mediaType: 0x1,
+      sourceUrl: 'https://whatsapp.com/channel/0029VaNRcHSJP2199iMQ4W0l',
+      renderLargerThumbnail: false,
+      showAdAttribution: true
+    };
+    const _0x335d96 = {
+      externalAdReply: _0x3d3859
+    };
+    const _0x5e6e82 = {
+      image: _0x9cb1f2,
+      caption: _0x257608,
+      footer: "",
+      buttonText: "> Reply with number",
+      sections: _0x4f98e5,
+      contextInfo: _0x335d96
+    };
+    const _0x1de632 = {
+      quoted: _0x273d53
+    };
+    await _0x2dda0c.replyList(_0x1a4b4b, _0x5e6e82, _0x1de632);
+  } catch (_0x366082) {
+    _0x2227d4(N_FOUND);
+    _0x39b0f9(_0x366082);
+  }
+});
+
+
+// BOT settings
+
+
+const botsettings = {
+  pattern: "botsettings",
+  desc: "Get bot's command list.",
+  category: "main",
+  use: ".menu",
+  filename: __filename
+};
+cmd(botsettings, async (_0x2dda0c, _0x273d53, _0x29736e, {
+  from: _0x1a4b4b,
+  prefix: _0x38ba5b,
+  l: _0x39b0f9,
+  quoted: _0x3107b5,
+  body: _0x269767,
+  isCmd: _0x499096,
+  command: _0x19b98f,
+  args: _0x2cc006,
+  q: _0x9a2d4e,
+  isGroup: _0xf655a4,
+  sender: _0x1112e6,
+  senderNumber: _0xaf0cc2,
+  botNumber2: _0x5efda4,
+  botNumber: _0x361fcd,
+  pushname: _0x1991e3,
+  isMe: _0xb6cc7f,
+  isOwner: _0x3808e2,
+  groupMetadata: _0x21e297,
+  groupName: _0x21d768,
+  participants: _0x24bc1a,
+  groupAdmins: _0x319ab6,
+  isBotAdmins: _0x318c50,
+  isAdmins: _0x1ede29,
+  reply: _0x2227d4
+}) => {
+  try {
+    if (os.hostname().length == 12) {
+      hostname = "replit";
+    } else {
+      if (os.hostname().length == 36) {
+        hostname = "heroku";
+      } else {
+        if (os.hostname().length == 8) {
+          hostname = "koyeb";
+        } else {
+          hostname = os.hostname();
+        }
+      }
+    }
+    const _0x257608 = "*Hi there,\nThe below bots are available, to change the settings first select a bot*";
+    const _0x4f98e5 = [{
+      'title': '',
+      'rows': [{
+        'title': '1',
+        'rowId': "xbytesettings",
+        'description': "X-BYTE SETTINGS"
+      },
+      {
+        'title': '2',
+        'rowId': "notavailable",
+        'description': "BYTE-LITE SETTINGS"
+      }]
+    }];
+    const _0x9cb1f2 = {
+      url: config.LOGO
+    };
+    const _0x3d3859 = {
+      mediaType: 0x1,
+      sourceUrl: 'https://whatsapp.com/channel/0029VaNRcHSJP2199iMQ4W0l',
+      renderLargerThumbnail: false,
+      showAdAttribution: true
+    };
+    const _0x335d96 = {
+      externalAdReply: _0x3d3859
+    };
+    const _0x5e6e82 = {
+      image: _0x9cb1f2,
+      caption: _0x257608,
+      footer: "",
+      buttonText: "> Reply with number",
+      sections: _0x4f98e5,
+      contextInfo: _0x335d96
+    };
+    const _0x1de632 = {
+      quoted: _0x273d53
+    };
+    await _0x2dda0c.replyList(_0x1a4b4b, _0x5e6e82, _0x1de632);
+  } catch (_0x366082) {
+    _0x2227d4(N_FOUND);
+    _0x39b0f9(_0x366082);
+  }
+});
+
+
+// X-BYTE settings
+
+
+const xbytesettings = {
+  pattern: "xbytesettings",
+  desc: "Get bot's command list.",
+  react:"⚙️",
+  category: "main",
+  use: ".menu",
+  filename: __filename
+};
+cmd(xbytesettings, async (_0x2dda0c, _0x273d53, _0x29736e, {
+  from: _0x1a4b4b,
+  prefix: _0x38ba5b,
+  l: _0x39b0f9,
+  quoted: _0x3107b5,
+  body: _0x269767,
+  isCmd: _0x499096,
+  command: _0x19b98f,
+  args: _0x2cc006,
+  q: _0x9a2d4e,
+  isGroup: _0xf655a4,
+  sender: _0x1112e6,
+  senderNumber: _0xaf0cc2,
+  botNumber2: _0x5efda4,
+  botNumber: _0x361fcd,
+  pushname: _0x1991e3,
+  isMe: _0xb6cc7f,
+  isOwner: _0x3808e2,
+  groupMetadata: _0x21e297,
+  groupName: _0x21d768,
+  participants: _0x24bc1a,
+  groupAdmins: _0x319ab6,
+  isBotAdmins: _0x318c50,
+  isAdmins: _0x1ede29,
+  reply: _0x2227d4
+}) => {
+  try {
+    if (os.hostname().length == 12) {
+      hostname = "replit";
+    } else {
+      if (os.hostname().length == 36) {
+        hostname = "heroku";
+      } else {
+        if (os.hostname().length == 8) {
+          hostname = "koyeb";
+        } else {
+          hostname = os.hostname();
+        }
+      }
+    }
+    const _0x257608 = "*At this time these settings are available for X-BYTE...*";
+    const _0x4f98e5 = [{
+      'title': '',
+      'rows': [{
+        'title': '1',
+        'rowId': "deletexbyte",
+        'description': "DELETE X-BYTE"
+      },
+      {
+        'title': '2',
+        'rowId': "restartxbyte",
+        'description': "RESTART X-BYTE"
+      },
+      {
+        'title': '3',
+        'rowId': "redeployxbyte",
+        'description': "REDEPLOY X-BYTE"
+      },]
     }];
     const _0x9cb1f2 = {
       url: config.LOGO
