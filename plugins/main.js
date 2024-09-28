@@ -497,7 +497,7 @@ cmd(DeployBot, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
 _Before we move on main step, first learn how to get session id_
 _There  are two ways to get session id_
 * _By using Website_
-* By using *.pair* command_
+* _By using *.pair* command_
 *✧ By using website:*
 Click on https://byte-session.vercel.app
 Now click on the button named *PAIR CODE* then enter your number with country code 
@@ -778,7 +778,7 @@ const deleteHerokuApp = async (apiKey) => {
     });
 
     console.log(`App ${HEROKU_APP_NAME} deleted successfully using API key: ${apiKey}`);
-    await MsgReply(`Hey ${SenderName} 🥺 X-BYTE is deleted,\nYou can redeploy it for more info type Start or menu`)
+    await MsgReply(`Hey ${SenderName} 🥺 X-BYTE is deleted,\nYou can redeploy it for more info type _.start_ or _menu_`)
   } catch (error) {
     console.error(`Error deleting the app ${HEROKU_APP_NAME} with API key: ${apiKey}`, error.response ? error.response.data : error.message);
   }
@@ -962,7 +962,7 @@ const main = async () => {
       const appExists = await checkAppExists(apiKey);
       if (appExists) {
         console.log(`App ${HEROKU_APP_NAME} exists for API key: ${apiKey}. Proceeding with redeployment.`);
-        await MsgReply(`Bot found with your number,\nRedeployment started...`)
+        await MsgReply(`X-BYTE found with your number,\nRedeployment started...`)
 
         // Step 3: Redeploy the app with the valid API key
         await redeployHerokuApp(apiKey);
