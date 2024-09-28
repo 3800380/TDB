@@ -294,7 +294,7 @@ const si = require("systeminformation");
       } else {
         hostname = os.hostname();
       }
-      const _0x2b5d2a = "```👋 Hello " + _0x2269cc + " I'm alive now" + "```" + "\n\n*👾 Im TDB whatsapp bot*\n    \n> *Version:* " + require('../package.json').version + "\n> *Memory:* " + (process.memoryUsage().heapUsed / 0x400 / 0x400).toFixed(0x2) + "MB / " + Math.round(require('os').totalmem / 0x400 / 0x400) + "MB\n> *Runtime:* " + runtime(process.uptime()) + "\n> *Platform:* " + hostname + "\n*Have A Nice Day*";
+      const _0x2b5d2a = "```👋 Hello " + _0x2269cc + " I'm alive now" + "```" + "\n\n*Im TDB whatsapp bot*\n    \n> *Version:* " + require('../package.json').version + "\n> *Memory:* " + (process.memoryUsage().heapUsed / 0x400 / 0x400).toFixed(0x2) + "MB / " + Math.round(require('os').totalmem / 0x400 / 0x400) + "MB\n> *Runtime:* " + runtime(process.uptime()) + "\n> *Platform:* " + hostname + "\n*Have A Nice Day*";
       const _0x1ce6af = {
         'display_text': config.BTN,
         'url': config.BTNURL,
@@ -410,7 +410,7 @@ cmd(HerokuMenu, async (_0x3a3ae0, _0x5d149b, _0x3b8a7f, {
   try {
   
     const _0x32d4b0 = `*HEROKU MENU*
-    Below are the avaiable options...`
+Below are the avaiable options...`
     const _0x463791 = [];
     const _0x181fa0 = new Map();
     for (let _0x37434c = 0; _0x37434c < 1; _0x37434c++) {
@@ -513,7 +513,7 @@ cmd(botMenu, async (_0x3a3ae0, _0x5d149b, _0x3b8a7f, {
   try {
   
     const _0x32d4b0 = `*BOT MENU*
-    Below are the avaiable options...`
+Below are the avaiable options...`
     const _0x463791 = [];
     const _0x181fa0 = new Map();
     for (let _0x37434c = 0; _0x37434c < 1; _0x37434c++) {
@@ -618,7 +618,7 @@ cmd(freeandroidbot, async (_0x3a3ae0, _0x5d149b, _0x3b8a7f, {
 }) => {
   try {
   
-    const _0x32d4b0 = 'To deploy bot on your number first get session id by typing command `.pair and your number with country code` then link it with your WhatsApp account*\n\nThen type `.deploy` with your session id which should be starts with Byte;;;*\n*and then wait for some time the bot will be deployed*';
+    const _0x32d4b0 = 'To deploy bot on your number first get session id by typing command `.pair and your number with country code` then link it with your WhatsApp account*\n\nThen type `.deploy` with your session id which should be starts with Byte;;;*\n*And then wait for some time the bot will be deployed*';
     const _0x463791 = [];
     const _0x181fa0 = new Map();
     for (let _0x37434c = 0; _0x37434c < 1; _0x37434c++) {
