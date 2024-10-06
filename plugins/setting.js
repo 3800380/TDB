@@ -2179,51 +2179,7 @@ cmd(_0x34ba9d, async (_0x163fe7, _0x447f62, _0x2e5dee, {
 function _0xb10fbf(_0x43d7e6, _0x28c580, _0x637f3b, _0x119e86, _0x62078e) {
   return _0x3230(_0x637f3b - 0x2a5, _0x28c580);
 }
-_0x5867df.pattern = "setlogo";
-_0x5867df.react = '🗣️';
-_0x5867df.desc = "To change bot logo";
-_0x5867df.category = "main";
-_0x5867df.use = ".setlogo logo url .";
-_0x5867df.filename = __filename;
-cmd(_0x5867df, async (_0x5c5a94, _0x541bd4, _0x25c15d, {
-  from: _0x45ccd8,
-  l: _0x1b6b4c,
-  quoted: _0x26e457,
-  body: _0x1cecdf,
-  isCmd: _0x21e96a,
-  command: _0x2c2fca,
-  args: _0x166a35,
-  q: _0x3f2ac7,
-  isGroup: _0x57a516,
-  sender: _0x3df056,
-  senderNumber: _0x11b378,
-  botNumber2: _0x4ade83,
-  botNumber: _0x174be1,
-  pushname: _0x4b7d72,
-  isMe: _0x5bf83c,
-  isOwner: _0xdc740f,
-  groupMetadata: _0x591259,
-  groupName: _0x20f4ad,
-  participants: _0x150ae4,
-  groupAdmins: _0x5e5910,
-  isBotAdmins: _0x4c6f04,
-  isAdmins: _0x28f293,
-  reply: _0x2ab5a3
-}) => {
-  try {
-    if (!_0x5bf83c) {
-      return await _0x2ab5a3(BOTOW);
-    }
-    if (config.LOGO == _0x3f2ac7) {
-      return _0x2ab5a3(alredy);
-    }
-    await input_set("LOGO", _0x3f2ac7);
-    await _0x2ab5a3("*Logo updated: " + _0x3f2ac7 + '*');
-  } catch (_0x44e073) {
-    _0x2ab5a3("*Error !!*");
-    _0x1b6b4c(_0x44e073);
-  }
-});
+
 const _0x5eaa0f = {
   'pattern': "welcome",
   'react': "🗣️",

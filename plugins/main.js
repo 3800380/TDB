@@ -19,230 +19,32 @@ const axios = require("axios");
 
 // deploying bot code:::
   
+const base64url = require('base64url'); // To decode base64url format
 const fetch = require('node-fetch');
 
+// Function to add days to the current date
 function addDays(daysToAdd) {
-  // Fetch the current date and time
-  let currentDate = new Date();
-  
-  // Add the days to the current date
-  currentDate.setDate(currentDate.getDate() + daysToAdd);
-  
-  // Format the date in MM/DD/YYYY format
-  let month = currentDate.getMonth() + 1; // Months are zero-based
-  let day = currentDate.getDate();
-  let year = currentDate.getFullYear();
-  
-  // Format the time in HH:MM:SS format
-  let hours = currentDate.getHours();
-  let minutes = currentDate.getMinutes();
-  let seconds = currentDate.getSeconds();
+    let currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + daysToAdd);
+    let month = padZero(currentDate.getMonth() + 1); // Months are zero-based
+    let day = padZero(currentDate.getDate());
+    let year = currentDate.getFullYear();
+    let newDate = `${year}-${month}-${day}`;
 
-  // Store date and time separately
-  let newDate = `${year}-${month}-${day}`;
-  let currentTime = `${hours}:${minutes}:${seconds}`;
-
-  return { newDate, currentTime };
+    return { newDate };
 }
-  
 
-
-let daysToAdd = 3;
-let result = addDays(daysToAdd);
-let expiryDate = result.newDate
-let expiryTime = result.currentTime
-
+function padZero(num) {
+    return num < 10 ? '0' + num : num;
+}
+// DeployBot command setup
 const DeployBot = {
-  'pattern': "deploy",
-  'react': '💫',
-  'filename': __filename
-};
-cmd(DeployBot, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
-  from: _0x3e7b20,
-  l: _0x447ea9,
-  prefix: _0x4be581,
-  quoted: _0x308131,
-  body: _0x3a6c50,
-  isCmd: _0x282b69,
-  command: _0x2b9288,
-  args: _0x5be5f4,
-  q: userMsg,
-  isGroup: _0x21f09e,
-  sender: _0x4815f1,
-  senderNumber: SenderNumber,
-  botNumber2: _0x43a7c6,
-  botNumber: _0x4ec681,
-  pushname: SenderName,
-  isMe: _0x1a6f96,
-  isOwner: _0x4a389b,
-  groupMetadata: _0xc3f48a,
-  groupName: _0x11681f,
-  participants: _0x1dda22,
-  groupAdmins: _0x1e7c00,
-  isBotAdmins: _0x4bfd22,
-  isAdmins: _0x5bb9bb,
-  reply: MsgReply
-}) => {
-  // Check if userMsg contains 'Byte;;;ey'
-  if (!userMsg.includes("Byte;;;ey")) {
-   await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
-    return; // Stop further execution if condition is not met
-  }
-  // URL of the JSON file hosted in your GitHub repository's raw content
-  const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
-  // GitHub repository details
-  const GITHUB_REPO = 'HyHamza/X-BYTE';  // GitHub repo in format 'username/repo'
-  // Function to fetch the API keys from the JSON file
-  async function fetchApiKeys() {
-    try {
-      const response = await fetch(API_KEYS_URL);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch API keys: ${response.statusText}`);
-      }
-      const data = await response.json();
-      return data.apiKeys;
-    } catch (error) {
-      console.error(error);
-      return [];
-    }
-  }
-  // Function to set custom config variables like HEROKU_APP_NAME and HEROKU_API_KEY
-  async function setConfigVars(appId, appName, apiKey) {
-    const configVars = {
-      HEROKU_APP_NAME: appName,
-      HEROKU_API_KEY: apiKey,
-      SESSION_ID: userMsg,
-      COMMAND_TYPE: "button",
-      POSTGRESQL_URL: "postgres://db_7xp9_user:6hwmTN7rGPNsjlBEHyX49CXwrG7cDeYi@dpg-cj7ldu5jeehc73b2p7g0-a.oregon-postgres.render.com/db_7xp9",
-      OWNER_NUMBER: SenderNumber,
-      ANTI_DELETE: "true",
-      WORK_TYPE: "public",
-      BOT_EXPIRY_DATE: expiryDate,
-      BOT_EXPIRY_TIME: expiryTime
-    };
-    const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'Accept': 'application/vnd.heroku+json; version=3'
-      },
-      body: JSON.stringify(configVars)
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to set config vars: ${response.statusText}`);
-    }
-    const configData = await response.json();
-    console.log('Config Vars Set:', configData);
-  }
-  // Function to check if an app name is already taken
-  async function isAppNameTaken(appName, apiKey) {
-    const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Accept': 'application/vnd.heroku+json; version=3'
-      }
-    });
-    if (response.status === 404) {
-      // App name is available
-      return false;
-    }
-    if (response.ok) {
-      // App name is taken
-      return true;
-    }
-    throw new Error(`Failed to check app name: ${response.statusText}`);
-  }
-  // Function to create a new Heroku app with the provided API key and GitHub repo deployment
-  async function createHerokuApp(apiKey) {
-   const appName = String("freex" + SenderNumber);  // App name based on sender's number
-    // Check if the app name is taken
-    const nameTaken = await isAppNameTaken(appName, apiKey);
-    if (nameTaken) {
-     await MsgReply("Sorry, you cannot get another bot, please try again later..")
-      console.log(`The app name "${appName}" is already taken. Stopping the process.`);
-      return;
-    }
-    const response = await fetch('https://api.heroku.com/apps', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'Accept': 'application/vnd.heroku+json; version=3'
-      },
-      body: JSON.stringify({
-        name: appName
-      })
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to create Heroku app with API key: ${response.statusText}`);
-    }
-    const appData = await response.json();
-    // Set custom config vars after app creation
-    await setConfigVars(appData.id, appName, apiKey);
-    // Link the GitHub repo to Heroku app
-    await linkGitHubRepoToHeroku(appData.id, apiKey);
-    return appData;
-  }
-  // Function to link the GitHub repo to Heroku app
-  async function linkGitHubRepoToHeroku(appId, apiKey) {
-    const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'Accept': 'application/vnd.heroku+json; version=3'
-      },
-      body: JSON.stringify({
-        source_blob: {
-          url: `https://github.com/${GITHUB_REPO}/tarball/main`  // Downloading the repo's tarball
-        }
-      })
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
-    }
-    const buildData = await response.json();
-    console.log('GitHub Repo Linked:', buildData);
-  }
-  // Function to deploy app using multiple API keys
-  async function deployWithMultipleKeys() {
-    const apiKeys = await fetchApiKeys();
-    if (apiKeys.length === 0) {
-      console.log('No API keys found. Please check the JSON file URL.');
-      return;
-    }
-    for (const apiKey of apiKeys) {
-      try {
-        console.log(`Attempting to deploy with API key: ${apiKey}`);
-        
-        const appData = await createHerokuApp(apiKey);
-        if (!appData) {
-          // If app creation failed due to a name clash, stop further attempts.
-          return;
-        }
-        MsgReply("Your Bot is deployed, wait for some time to be activated...\nIf it doesn't work then contact our support team.");
-        console.log(`App deployed successfully with API key: ${apiKey}`);
-        console.log('App Name:', appData.name);
-        console.log('App details:', appData);
-        break;  // Exit the loop if deployment is successful
-      } catch (error) {
-        console.error(`Error with API key: ${apiKey} - ${error.message}`);
-        continue;  // Try the next API key
-      }
-    }
-  }
-  // Start the deployment process
-  deployWithMultipleKeys();
-});
-  ///////////////////////////////
-  const tddeploy = {
-    'pattern': "tddeploy",
+    'pattern': "deploy",
     'react': '💫',
     'filename': __filename
-  };
-  cmd(tddeploy, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+};
+
+cmd(DeployBot, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
     from: _0x3e7b20,
     l: _0x447ea9,
     prefix: _0x4be581,
@@ -254,7 +56,7 @@ cmd(DeployBot, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
     q: userMsg,
     isGroup: _0x21f09e,
     sender: _0x4815f1,
-    senderNumber: sendernumber,
+    senderNumber: SenderNumber,
     botNumber2: _0x43a7c6,
     botNumber: _0x4ec681,
     pushname: SenderName,
@@ -267,196 +69,5172 @@ cmd(DeployBot, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
     isBotAdmins: _0x4bfd22,
     isAdmins: _0x5bb9bb,
     reply: MsgReply
-  }) => {
-  
+}) => {
+
     // Check if userMsg contains 'Byte;;;ey'
     if (!userMsg.includes("Byte;;;ey")) {
-      MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
-      return; // Stop further execution if condition is not met
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
     }
-  function generateRandomAppName() {
-  const adjectives = ["xbyte", "talkdrove", "hamza", "td", "tdb"];
-  const nouns = ["bot", "botct", "wa", "whatsapp", "haha"];
-  const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
-  const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
-  const randomSuffix = Math.floor(Math.random() * 10000); // Adding numbers to avoid duplicates
-  return `${randomAdjective}-${randomNoun}-${randomSuffix}`;
-}
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // Add 3 days to the current date for expiry date
+    let daysToAdd = 3;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+
     // URL of the JSON file hosted in your GitHub repository's raw content
     const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
-  
     // GitHub repository details
-    const GITHUB_REPO = 'HyHamza/X-BYTE';  // GitHub repo in format 'username/repo'
-  
-    // Function to fetch the API keys from the JSON file
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
     async function fetchApiKeys() {
-      try {
-        const response = await fetch(API_KEYS_URL);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
         }
-        const data = await response.json();
-        return data.apiKeys;
-      } catch (error) {
-        console.error(error);
-        return [];
-      }
     }
-  const appName = generateRandomAppName()
-    // Function to set custom config variables like HEROKU_APP_NAME and HEROKU_API_KEY
+
+    // Function to set config vars in Heroku
     async function setConfigVars(appId, appName, apiKey) {
-      const configVars = {
-        HEROKU_APP_NAME: appName,
-        HEROKU_API_KEY: apiKey,
-        SESSION_ID: userMsg,
-        COMMAND_TYPE: "button",
-        POSTGRESQL_URL: "postgres://db_7xp9_user:6hwmTN7rGPNsjlBEHyX49CXwrG7cDeYi@dpg-cj7ldu5jeehc73b2p7g0-a.oregon-postgres.render.com/db_7xp9",
-        OWNER_NUMBER: sendernumber,
-        ANTI_DELETE: "true",
-        WORK_TYPE: "public",
-        BOT_EXPIRY_DATE: expiryDate,
-        BOT_EXPIRY_TIME: expiryTime
-      };
-  
-      const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-          'Accept': 'application/vnd.heroku+json; version=3'
-        },
-        body: JSON.stringify(configVars)
-      });
-  
-      if (!response.ok) {
-        throw new Error(`Failed to set config vars: ${response.statusText}`);
-      }
-  
-      const configData = await response.json();
-      console.log('Config Vars Set:', configData);
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
     }
-  
+
     // Function to check if an app name is already taken
     async function isAppNameTaken(appName, apiKey) {
-      const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Accept': 'application/vnd.heroku+json; version=3'
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
         }
-      });
-  
-      if (response.status === 404) {
-        // App name is available
-        return false;
-      }
-  
-      if (response.ok) {
-        // App name is taken
-        return true;
-      }
-  
-      throw new Error(`Failed to check app name: ${response.statusText}`);
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
     }
-  
-    // Function to create a new Heroku app with the provided API key and GitHub repo deployment
+
+    // Function to create a new Heroku app
     async function createHerokuApp(apiKey) {
-     // const appName = String("freex" + sendernumber);  // App name based on sender's number
-  
-      // Check if the app name is taken
-      const nameTaken = await isAppNameTaken(appName, apiKey);
-  
-      if (nameTaken) {
-       await MsgReply("Sorry, you cannot get another bot, please try again later..")
-        console.log(`The app name "${appName}" is already taken. Stopping the process.`);
-        return;
-      }
-  
-      const response = await fetch('https://api.heroku.com/apps', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-          'Accept': 'application/vnd.heroku+json; version=3'
-        },
-        body: JSON.stringify({
-          name: appName
-        })
-      });
-  
-      if (!response.ok) {
-        throw new Error(`Failed to create Heroku app with API key: ${response.statusText}`);
-      }
-  
-      const appData = await response.json();
-  
-      // Set custom config vars after app creation
-      await setConfigVars(appData.id, appName, apiKey);
-  
-      // Link the GitHub repo to Heroku app
-      await linkGitHubRepoToHeroku(appData.id, apiKey);
-  
-      return appData;
-    }
-  
-    // Function to link the GitHub repo to Heroku app
-    async function linkGitHubRepoToHeroku(appId, apiKey) {
-      const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-          'Accept': 'application/vnd.heroku+json; version=3'
-        },
-        body: JSON.stringify({
-          source_blob: {
-            url: `https://github.com/${GITHUB_REPO}/tarball/main`  // Downloading the repo's tarball
-          }
-        })
-      });
-  
-      if (!response.ok) {
-        throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
-      }
-  
-      const buildData = await response.json();
-      console.log('GitHub Repo Linked:', buildData);
-    }
-  
-    // Function to deploy app using multiple API keys
-    async function deployWithMultipleKeys() {
-      const apiKeys = await fetchApiKeys();
-  
-      if (apiKeys.length === 0) {
-        console.log('No API keys found. Please check the JSON file URL.');
-        return;
-      }
-  
-      for (const apiKey of apiKeys) {
-        try {
-          console.log(`Attempting to deploy with API key: ${apiKey}`);
-          
-          const appData = await createHerokuApp(apiKey);
-          if (!appData) {
-            // If app creation failed due to a name clash, stop further attempts.
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, you cannot get another bot, please try again later.");
             return;
-          }
-          MsgReply("Your Bot is deployed, wait for some time to be activated...\nIf it doesn't work then contact our support team.");
-          console.log(`App deployed successfully with API key: ${apiKey}`);
-          console.log('App Name:', appData.name);
-          console.log('App details:', appData);
-          break;  // Exit the loop if deployment is successful
-        } catch (error) {
-          console.error(`Error with API key: ${apiKey} - ${error.message}`);
-          continue;  // Try the next API key
         }
-      }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
     }
-  
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply("Your Bot is deployed, wait for some time to be activated. If it doesn't work, contact our support team.");
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
     // Start the deployment process
     deployWithMultipleKeys();
-  });
-  const freebotinfo = {
+});
+
+
+
+
+
+// d1
+
+const d1 = {
+    'pattern': "d1",
+    'alias': 'deploy1',
+    'react': '1️⃣',
+    'filename': __filename
+};
+
+cmd(d1, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // Add 3 days to the current date for expiry date
+    let daysToAdd = 1;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+
+
+
+
+// d2
+
+const d2 = {
+    'pattern': "d2",
+    'alias': 'deploy2',
+    'react': '2️⃣',
+    'filename': __filename
+};
+
+cmd(d2, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // Add 3 days to the current date for expiry date
+    let daysToAdd = 2;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//End
+
+
+
+
+
+
+
+
+// d3
+
+const d3 = {
+    'pattern': "d3",
+    'alias': 'deploy3',
+    'react': '3️⃣',
+    'filename': __filename
+};
+
+cmd(d3, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 3;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//End
+
+
+
+
+
+
+
+
+
+
+// d4
+
+const d4 = {
+    'pattern': "d4",
+    'alias': 'deploy4',
+    'react': '4️⃣',
+    'filename': __filename
+};
+
+cmd(d4, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 4;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//End
+
+
+
+
+
+// d5
+
+const d5 = {
+    'pattern': "d5",
+    'alias': 'deploy5',
+    'react': '5️⃣',
+    'filename': __filename
+};
+
+cmd(d5, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 5;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//d5 End
+
+
+
+
+
+
+
+
+// d6 start
+
+const d6 = {
+    'pattern': "d6",
+    'alias': 'deploy6',
+    'react': '6️⃣',
+    'filename': __filename
+};
+
+cmd(d6, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 6;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//d6 End
+
+
+
+
+
+
+
+
+// d7 start
+
+const d7 = {
+    'pattern': "d7",
+    'alias': 'deploy7',
+    'react': '👍',
+    'filename': __filename
+};
+
+cmd(d7, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 7;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//d7 End
+
+
+
+
+
+// d8 start
+
+const d8 = {
+    'pattern': "d8",
+    'alias': 'deploy8',
+    'react': '👍',
+    'filename': __filename
+};
+
+cmd(d8, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 7;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//d8 End
+
+
+
+
+
+
+// d9 start
+
+const d9 = {
+    'pattern': "d9",
+    'alias': 'deploy9',
+    'react': '👍',
+    'filename': __filename
+};
+
+cmd(d9, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 9;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//d9 End
+
+
+
+
+
+
+
+
+// d10 start
+
+const d10 = {
+    'pattern': "d10",
+    'alias': 'deploy10',
+    'react': '👍',
+    'filename': __filename
+};
+
+cmd(d10, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 10;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//d10 End
+
+
+// d11 start
+
+const d11 = {
+    'pattern': "d11",
+    'alias': 'deploy11',
+    'react': '👍',
+    'filename': __filename
+};
+
+cmd(d11, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 11;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//d11 End
+
+
+
+
+
+// d12 start
+
+const d12 = {
+    'pattern': "d12",
+    'alias': 'deploy12',
+    'react': '👍',
+    'filename': __filename
+};
+
+cmd(d12, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 12;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//d12 End
+
+
+
+
+
+// d13 start
+
+const d13 = {
+    'pattern': "d13",
+    'alias': 'deploy13',
+    'react': '👍',
+    'filename': __filename
+};
+
+cmd(d13, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 13;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//d13 End
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// d14 start
+
+const d14 = {
+    'pattern': "d14",
+    'alias': 'deploy14',
+    'react': '👍',
+    'filename': __filename
+};
+
+cmd(d14, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 14;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//d14 End
+
+
+
+
+
+
+
+// d15 start
+
+const d15 = {
+    'pattern': "d15",
+    'alias': 'deploy15',
+    'react': '👍',
+    'filename': __filename
+};
+
+cmd(d15, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 15;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//d15 End
+
+
+
+
+
+
+
+// d16 start
+
+const d16 = {
+    'pattern': "d16",
+    'alias': 'deploy16',
+    'react': '👍',
+    'filename': __filename
+};
+
+cmd(d16, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 16;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//d16 End
+
+
+
+
+
+
+
+// d17 start
+
+const d17 = {
+    'pattern': "d17",
+    'alias': 'deploy17',
+    'react': '👍',
+    'filename': __filename
+};
+
+cmd(d17, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 17;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//d17 End
+
+
+
+
+
+
+
+// d18 start
+
+const d18 = {
+    'pattern': "d18",
+    'alias': 'deploy18',
+    'react': '👍',
+    'filename': __filename
+};
+
+cmd(d18, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 18;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//d18 End
+
+
+
+
+
+
+
+// d19 start
+
+const d19 = {
+    'pattern': "d19",
+    'alias': 'deploy19',
+    'react': '👍',
+    'filename': __filename
+};
+
+cmd(d19, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 19;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//d19 End
+
+
+
+
+
+
+
+// d20 start
+
+const d20 = {
+    'pattern': "d20",
+    'alias': 'deploy20',
+    'react': '☺️',
+    'filename': __filename
+};
+
+cmd(d20, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 20;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//d20 End
+
+
+// d25 start
+
+const d25 = {
+    'pattern': "d25",
+    'alias': 'deploy25',
+    'react': '😚',
+    'filename': __filename
+};
+
+cmd(d25, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 25;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//d25 End
+
+
+
+
+// d30 start
+
+const d30 = {
+    'pattern': "d30",
+    'alias': 'deploy30',
+    'react': '🪘',
+    'filename': __filename
+};
+
+cmd(d30, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
+    from: _0x3e7b20,
+    l: _0x447ea9,
+    prefix: _0x4be581,
+    quoted: _0x308131,
+    body: _0x3a6c50,
+    isCmd: _0x282b69,
+    command: _0x2b9288,
+    args: _0x5be5f4,
+    q: userMsg,
+    isGroup: _0x21f09e,
+    sender: _0x4815f1,
+    senderNumber: SenderNumber,
+    botNumber2: _0x43a7c6,
+    botNumber: _0x4ec681,
+    pushname: SenderName,
+    isMe: _0x1a6f96,
+    isOwner: _0x4a389b,
+    groupMetadata: _0xc3f48a,
+    groupName: _0x11681f,
+    participants: _0x1dda22,
+    groupAdmins: _0x1e7c00,
+    isBotAdmins: _0x4bfd22,
+    isAdmins: _0x5bb9bb,
+    reply: MsgReply
+}) => {
+    let daysToAdd = 30;
+    let result = addDays(daysToAdd);
+    let expiryDate = result.newDate;
+    // Check if userMsg contains 'Byte;;;ey'
+    if (!userMsg.includes("Byte;;;ey")) {
+        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+        return;
+    }
+
+    // Extract the session ID (removing 'Byte;;;')
+    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+
+    // Decode the session ID using base64url
+    let decodedSession;
+    try {
+        decodedSession = base64url.decode(encodedSessionId);
+    } catch (error) {
+        await MsgReply("Invalid session ID format. Please provide a valid session ID.");
+        return;
+    }
+
+    // Parse the decoded session as JSON
+    let sessionData;
+    try {
+        sessionData = JSON.parse(decodedSession);
+    } catch (error) {
+        await MsgReply("Failed to parse the session ID. Ensure it's in the correct format.");
+        return;
+    }
+
+    // Extract the number from the "me" field (e.g., "923152380380:33@s.whatsapp.net")
+    let numberField = sessionData.me.id.split('@')[0]; // Get the number before '@'
+    let number = numberField.split(':')[0]; // Extract the actual phone number
+
+    // Construct app name using the extracted number
+    let appName = 'f' + number + "-" + daysToAdd + 'days';
+
+    // URL of the JSON file hosted in your GitHub repository's raw content
+    const API_KEYS_URL = 'https://raw.githubusercontent.com/3800380/3800380TDB/main/apis.json';
+    // GitHub repository details
+    const GITHUB_REPO = 'HyHamza/X-BYTE';
+
+    // Function to fetch API keys from the JSON file
+    async function fetchApiKeys() {
+        try {
+            const response = await fetch(API_KEYS_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch API keys: ${response.statusText}`);
+            }
+            const data = await response.json();
+            return data.apiKeys;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
+    // Function to set config vars in Heroku
+    async function setConfigVars(appId, appName, apiKey) {
+        const configVars = {
+            HEROKU_APP_NAME: appName,
+            HEROKU_API_KEY: apiKey,
+            SESSION_ID: userMsg,
+            COMMAND_TYPE: "button",
+            POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
+            OWNER_NUMBER: number,
+            ANTI_DELETE: "true",
+            WORK_TYPE: "public",
+            BOT_EXPIRY_DATE: expiryDate,
+            BOT_EXPIRY_TIME: '16:00:00'
+        };
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/config-vars`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify(configVars)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to set config vars: ${response.statusText}`);
+        }
+        const configData = await response.json();
+        console.log('Config Vars Set:', configData);
+    }
+
+    // Function to check if an app name is already taken
+    async function isAppNameTaken(appName, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            }
+        });
+        if (response.status === 404) {
+            return false;
+        }
+        if (response.ok) {
+            return true;
+        }
+        throw new Error(`Failed to check app name: ${response.statusText}`);
+    }
+
+    // Function to create a new Heroku app
+    async function createHerokuApp(apiKey) {
+
+        const nameTaken = await isAppNameTaken(appName, apiKey);
+        if (nameTaken) {
+            await MsgReply("Sorry, with the same number he already got a bot.");
+            return;
+        }
+
+        const response = await fetch('https://api.heroku.com/apps', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({ name: appName })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create Heroku app: ${response.statusText}`);
+        }
+        const appData = await response.json();
+
+        await setConfigVars(appData.id, appName, apiKey);
+        await linkGitHubRepoToHeroku(appData.id, apiKey);
+
+        return appData;
+    }
+
+    // Function to link GitHub repo to Heroku app
+    async function linkGitHubRepoToHeroku(appId, apiKey) {
+        const response = await fetch(`https://api.heroku.com/apps/${appId}/builds`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+                'Accept': 'application/vnd.heroku+json; version=3'
+            },
+            body: JSON.stringify({
+                source_blob: {
+                    url: `https://github.com/${GITHUB_REPO}/tarball/main`
+                }
+            })
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to link GitHub repo to Heroku app: ${response.statusText}`);
+        }
+        const buildData = await response.json();
+        console.log('GitHub Repo Linked:', buildData);
+    }
+
+    // Function to deploy with multiple API keys
+    async function deployWithMultipleKeys() {
+        const apiKeys = await fetchApiKeys();
+        if (apiKeys.length === 0) {
+            console.log('No API keys found.');
+            return;
+        }
+        for (const apiKey of apiKeys) {
+            try {
+                const appData = await createHerokuApp(apiKey);
+                if (!appData) {
+                    return;
+                }
+                MsgReply(`Bot is deployed for ${daysToAdd} days.\nIf it does not check the session id.`);
+                console.log(`App deployed successfully with API key: ${apiKey}`);
+                console.log('App Name:', appData.name);
+                break;
+            } catch (error) {
+                console.error(`Error with API key: ${apiKey} - ${error.message}`);
+                continue;
+            }
+        }
+    }
+
+    // Start the deployment process
+    deployWithMultipleKeys();
+});
+//d30 End
+
+
+
+////////////////////////////////////////////////////////-------------------------/////////////////
+//Rest codee
+
+
+
+const freebotinfo = {
     'pattern': "freebotmoreinfo",
     'react':'ℹ️',
     'alias': ['pairinfo'],
