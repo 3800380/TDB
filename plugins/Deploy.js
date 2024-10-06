@@ -16,9 +16,6 @@ const {
 } = require("../lib/functions");
 const axios = require("axios");
 
-
-// deploying bot code:::
-  
 const base64url = require('base64url'); // To decode base64url format
 const fetch = require('node-fetch');
 
@@ -37,6 +34,7 @@ function addDays(daysToAdd) {
 function padZero(num) {
     return num < 10 ? '0' + num : num;
 }
+
 // DeployBot command setup
 const DeployBot = {
     'pattern': "d",
@@ -71,16 +69,37 @@ cmd(DeployBot, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
     reply: MsgReply
 }) => {
 
-    // Check if userMsg contains 'Byte;;;ey'
-    if (!userMsg.includes("Byte;;;ey")) {
-        await MsgReply("*Please give me a valid Session ID which starts with Byte;;;*\n> _for example:_\n_.deploy Byte;;; (session ID)_\nOr type `.pairinfo` for more information");
+    // Check if the message contains '|' for splitting
+    if (!userMsg.includes('|')) {
+        await MsgReply("*Please use the correct format: `.deploy <days> | <session ID>`*\n> _for example:_\n_.deploy 10 | Byte;;; (session ID)_");
         return;
     }
 
-    // Extract the session ID (removing 'Byte;;;')
-    let encodedSessionId = userMsg.split("Byte;;;")[1].trim();
+    // Split the message by '|'
+    let parts = userMsg.split('|');
+    let daysToAddStr = parts[0].trim(); // The first part is the number of days
+    let encodedSessionId = parts[1].trim(); // The second part is the session ID
 
-    // Decode the session ID using base64url
+    // Convert daysToAddStr to a number
+    let daysToAdd;
+    try {
+        daysToAdd = parseInt(daysToAddStr);
+        if (isNaN(daysToAdd) || daysToAdd <= 0) {
+            throw new Error("Invalid days format");
+        }
+    } catch (error) {
+        await MsgReply("Please provide a valid number of days.");
+        return;
+    }
+
+    // Validate the session ID format
+    if (!encodedSessionId.startsWith("Byte;;;")) {
+        await MsgReply("*Please provide a valid Session ID that starts with Byte;;;*\n> _for example:_\n_.deploy 10 | Byte;;; (session ID)_");
+        return;
+    }
+
+    // Remove 'Byte;;;' and decode the session ID
+    encodedSessionId = encodedSessionId.split("Byte;;;")[1].trim();
     let decodedSession;
     try {
         decodedSession = base64url.decode(encodedSessionId);
@@ -89,7 +108,7 @@ cmd(DeployBot, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
         return;
     }
 
-    // Parse the decoded session as JSON
+    // Parse the decoded session into JSON
     let sessionData;
     try {
         sessionData = JSON.parse(decodedSession);
@@ -105,8 +124,7 @@ cmd(DeployBot, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
     // Construct app name using the extracted number
     let appName = 'f' + number + "-" + daysToAdd + 'days';
 
-    // Add 3 days to the current date for expiry date
-    let daysToAdd = 3;
+    // Add the specified number of days to the current date for expiry date
     let result = addDays(daysToAdd);
     let expiryDate = result.newDate;
 
