@@ -153,7 +153,7 @@ cmd(DeployBot, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
         const configVars = {
             HEROKU_APP_NAME: appName,
             HEROKU_API_KEY: apiKey,
-            SESSION_ID: userMsg,
+            SESSION_ID: `Byte;;;${encodedSessionId}`,
             COMMAND_TYPE: "button",
             POSTGRESQL_URL: "postgres://db_7xp9_user:password@render.com/db_7xp9",
             OWNER_NUMBER: number,
