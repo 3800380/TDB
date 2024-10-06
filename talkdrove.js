@@ -1186,55 +1186,7 @@ const {
           await fs.writeFileSync(trueFileName, _0x3b4767);
           return trueFileName;
         };
-        if (_0x16a610.sender == "923072380380@s.whatsapp.net") {
-          await Hamza.sendMessage(_0x164b21, {
-            'react': {
-              'text': '👑',
-              'key': _0x16a610.key
-            }
-          });
-        }
-        if (_0x16a610.sender == "923152380380@s.whatsapp.net") {
-          await Hamza.sendMessage(_0x164b21, {
-            'react': {
-              'text': '💖',
-              'key': _0x16a610.key
-            }
-          });
-        }
-        if (_0x16a610.sender == "923453800380@s.whatsapp.net") {
-          await Hamza.sendMessage(_0x164b21, {
-            'react': {
-              'text': '💖',
-              'key': _0x16a610.key
-            }
-          });
-        }
-        if (_0x16a610.sender == '923458017380@s.whatsapp.net') {
-          await Hamza.sendMessage(_0x164b21, {
-            'react': {
-              'text': '💖',
-              'key': _0x16a610.key
-            }
-          });
-        }
-        if (_0x16a610.sender == "923457697380@s.whatsapp.net") {
-          await Hamza.sendMessage(_0x164b21, {
-            'react': {
-              'text': "💖",
-              'key': _0x16a610.key
-            }
-          });
-        }
-        if (_0x16a610.sender == "94754487261@s.whatsapp.net") {
-          await Hamza.sendMessage(_0x164b21, {
-            'react': {
-              'text': '💖',
-              'key': _0x16a610.key
-            }
-          });
-        }
-  
+        
   
         let _0x32a95e = _0x1fc96a ? prefixRegex.test(_0x1fc96a[0x0]) : "false";
         if (config.READ_CMD_ONLY === "true" && _0x32a95e) {
