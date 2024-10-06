@@ -122,7 +122,7 @@ cmd(DeployBot, async (_0xe0d887, _0x2bbfc0, _0x5b2efc, {
     let number = numberField.split(':')[0]; // Extract the actual phone number
 
     // Construct app name using the extracted number
-    let appName = 'f' + number + "-" + daysToAdd + 'days';
+    let appName = 'free-' + number + "-" + daysToAdd + 'days';
 
     // Add the specified number of days to the current date for expiry date
     let result = addDays(daysToAdd);
