@@ -17,6 +17,7 @@ const {
     proto
   } = require("@whiskeysockets/baileys");
   const fs = require('fs');
+  const express = require("express");
   const P = require('pino');
   const FileType = require("file-type");
   const moment = require("moment-timezone");
@@ -97,10 +98,9 @@ const {
   } else {
     console.log("Session already exists.");
   }
-  const express = require("express");
+
   const app = express();
   __path = process.cwd();
-  const bodyParser = require('body-parser');
   const PORT = process.env.PORT || 0x1f40;
   async function connectToWA() {
     const {
@@ -1578,16 +1578,7 @@ const {
       }
     });
   }
-  let code = require("./lib/sessions/pair");
-  require("events").EventEmitter.defaultMaxListeners = 0x1f4;
-  app.use("/code", code);
-  app.use('/', async (_0x252c85, _0x4d8ce5, _0x386e47) => {
-    _0x4d8ce5.sendFile(__path + "/lib/sessions/pair.html");
-  });
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({
-    'extended': true
-  }));
+  
   app.listen(PORT, () => {
     console.log("Server running on http://localhost:" + PORT);
   });
